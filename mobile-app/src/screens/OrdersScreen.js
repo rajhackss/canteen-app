@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -8,32 +8,50 @@ import {
   ActivityIndicator,
   RefreshControl,
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { orderAPI } from '../services/api';
 
 const OrdersScreen = ({ navigation }) => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const hasLoadedOnce = useRef(false);
 
-  useEffect(() => {
-    loadOrders();
-  }, []);
-
-  const loadOrders = async () => {
+  const loadOrders = async (silent = false) => {
     try {
-      setLoading(true);
+      if (!silent && !hasLoadedOnce.current) {
+        setLoading(true);
+      }
       const response = await orderAPI.getMyOrders();
       setOrders(response.data);
+      hasLoadedOnce.current = true;
     } catch (error) {
-      console.error('Error loading orders:', error);
+      if (!silent) {
+        console.error('Error loading orders:', error);
+      }
     } finally {
-      setLoading(false);
+      if (!silent) {
+        setLoading(false);
+      }
     }
   };
 
+  // Real-time updates: fetch when screen is focused and poll silently every 4 seconds
+  useFocusEffect(
+    useCallback(() => {
+      loadOrders(hasLoadedOnce.current);
+
+      const interval = setInterval(() => {
+        loadOrders(true);
+      }, 4000);
+
+      return () => clearInterval(interval);
+    }, [])
+  );
+
   const onRefresh = async () => {
     setRefreshing(true);
-    await loadOrders();
+    await loadOrders(false);
     setRefreshing(false);
   };
 

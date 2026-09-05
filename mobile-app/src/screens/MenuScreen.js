@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   RefreshControl,
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { menuAPI } from '../services/api';
 
 const MenuScreen = ({ navigation }) => {
@@ -17,29 +18,56 @@ const MenuScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const selectedCategoryRef = useRef('all');
+  const hasLoadedOnce = useRef(false);
 
-  const categories = ['all', 'breakfast', 'lunch', 'snacks', 'beverages', 'dinner'];
+  selectedCategoryRef.current = selectedCategory;
 
-  useEffect(() => {
-    loadMenuItems();
-  }, []);
-
-  const loadMenuItems = async () => {
+  const loadMenuItems = async (silent = false) => {
     try {
-      setLoading(true);
+      if (!silent && !hasLoadedOnce.current) {
+        setLoading(true);
+      }
       const response = await menuAPI.getAll();
-      setMenuItems(response.data);
-      setFilteredItems(response.data);
+      const items = response.data || [];
+      setMenuItems(items);
+      
+      const currentCat = selectedCategoryRef.current;
+      if (currentCat === 'all') {
+        setFilteredItems(items);
+      } else {
+        setFilteredItems(items.filter(item => item.category === currentCat));
+      }
+      hasLoadedOnce.current = true;
     } catch (error) {
-      console.error('Error loading menu:', error);
+      if (!silent) {
+        console.error('Error loading menu:', error);
+      }
     } finally {
-      setLoading(false);
+      if (!silent) {
+        setLoading(false);
+      }
     }
   };
 
+  // Real-time updates: fetch on focus and poll silently every 8 seconds
+  useFocusEffect(
+    useCallback(() => {
+      loadMenuItems(hasLoadedOnce.current);
+
+      const interval = setInterval(() => {
+        loadMenuItems(true);
+      }, 8000);
+
+      return () => clearInterval(interval);
+    }, [])
+  );
+
+  const categories = ['all', 'breakfast', 'lunch', 'snacks', 'beverages', 'dinner'];
+
   const onRefresh = async () => {
     setRefreshing(true);
-    await loadMenuItems();
+    await loadMenuItems(false);
     setRefreshing(false);
   };
 

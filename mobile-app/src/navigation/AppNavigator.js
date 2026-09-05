@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 
 // Screens
 import LoginScreen from '../screens/LoginScreen';
@@ -20,6 +21,9 @@ const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const MainTabs = () => {
+  const { getCartCount } = useCart();
+  const cartCount = getCartCount();
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -34,6 +38,15 @@ const MainTabs = () => {
         options={{
           tabBarLabel: 'Menu',
           tabBarIcon: ({ color }) => <Text style={{ fontSize: 24, color }}>🍽️</Text>,
+        }}
+      />
+      <Tab.Screen
+        name="Cart"
+        component={CartScreen}
+        options={{
+          tabBarLabel: 'Cart',
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 24, color }}>🛒</Text>,
+          tabBarBadge: cartCount > 0 ? cartCount : undefined,
         }}
       />
       <Tab.Screen
@@ -78,11 +91,6 @@ const AppNavigator = () => {
               name="MenuItemDetail" 
               component={MenuItemDetailScreen}
               options={{ headerShown: true, title: 'Item Details' }}
-            />
-            <Stack.Screen 
-              name="Cart" 
-              component={CartScreen}
-              options={{ headerShown: true, title: 'My Cart' }}
             />
             <Stack.Screen 
               name="Checkout" 

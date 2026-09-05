@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -8,29 +8,47 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { orderAPI } from '../services/api';
 
 const OrderDetailScreen = ({ route, navigation }) => {
   const { orderId } = route.params;
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
+  const hasLoadedOnce = useRef(false);
 
-  useEffect(() => {
-    loadOrderDetail();
-  }, [orderId]);
-
-  const loadOrderDetail = async () => {
+  const loadOrderDetail = async (silent = false) => {
     try {
-      setLoading(true);
+      if (!silent && !hasLoadedOnce.current) {
+        setLoading(true);
+      }
       const response = await orderAPI.getById(orderId);
       setOrder(response.data);
+      hasLoadedOnce.current = true;
     } catch (error) {
-      console.error('Error loading order detail:', error);
-      Alert.alert('Error', 'Failed to load order details');
+      if (!silent) {
+        console.error('Error loading order detail:', error);
+        Alert.alert('Error', 'Failed to load order details');
+      }
     } finally {
-      setLoading(false);
+      if (!silent) {
+        setLoading(false);
+      }
     }
   };
+
+  // Real-time updates: fetch on focus and poll silently every 3 seconds
+  useFocusEffect(
+    useCallback(() => {
+      loadOrderDetail(hasLoadedOnce.current);
+
+      const interval = setInterval(() => {
+        loadOrderDetail(true);
+      }, 3000);
+
+      return () => clearInterval(interval);
+    }, [orderId])
+  );
 
   const handleCancelOrder = async () => {
     Alert.alert(
