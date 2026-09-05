@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Canteen - Admin Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav button {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .nav button:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .nav button.active {
+            background-color: white;
+            color: #4CAF50;
+        }
+
+        .header-right .btn {
+            padding: 8px 16px;
+            font-size: 12px;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #45a049;
+        }
+
+        .btn-danger {
+            background-color: #F44336;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #da190b;
+        }
+
+        .btn-secondary {
+            background-color: #666;
+            color: white;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .table th {
+            background-color: #f8f8f8;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .table tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background-color: #FF9800;
+            color: white;
+        }
+
+        .status-confirmed {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .status-preparing {
+            background-color: #9C27B0;
+            color: white;
+        }
+
+        .status-ready {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .status-completed {
+            background-color: #8BC34A;
+            color: white;
+        }
+
+        .status-cancelled {
+            background-color: #F44336;
+            color: white;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .error {
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+
+        .success {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h3 {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .actions button {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🍽️ Smart Canteen Admin</h1>
+            <div class="header-right">
+                <div class="nav">
+                    <button class="active" onclick="showSection('dashboard')">Dashboard</button>
+                    <button onclick="showSection('menu')">Menu</button>
+                    <button onclick="showSection('orders')">Orders</button>
+                </div>
+                <button class="btn btn-danger" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <div id="dashboard-section">
+            <div class="grid">
+                <div class="stat-card">
+                    <h3>Total Orders Today</h3>
+                    <div class="value" id="total-orders">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Pending Orders</h3>
+                    <div class="value" id="pending-orders">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Revenue Today</h3>
+                    <div class="value" id="total-revenue">₹0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Menu Items</h3>
+                    <div class="value" id="menu-items-count">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="menu-section" class="hidden">
+            <div class="card">
+                <h2>Add Menu Item</h2>
+                <form id="menu-form">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" id="menu-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="menu-description" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Price (₹)</label>
+                        <input type="number" id="menu-price" required min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="menu-category" required>
+                            <option value="breakfast">Breakfast</option>
+                            <option value="lunch">Lunch</option>
+                            <option value="snacks">Snacks</option>
+                            <option value="beverages">Beverages</option>
+                            <option value="dinner">Dinner</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Preparation Time (minutes)</label>
+                        <input type="number" id="menu-prep-time" required min="1" value="15">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Menu Item</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>Menu Items</h2>
+                <div id="menu-loading" class="loading">Loading menu items...</div>
+                <div id="menu-error" class="error hidden"></div>
+                <table class="table" id="menu-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Prep Time</th>
+                            <th>Available</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="menu-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="orders-section" class="hidden">
+            <div class="card">
+                <h2>Orders</h2>
+                <div class="form-group">
+                    <label>Filter by Status</label>
+                    <select id="order-filter" onchange="loadOrders()">
+                        <option value="">All Orders</option>
+                        <option value="pending">Pending</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="preparing">Preparing</option>
+                        <option value="ready">Ready</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div id="orders-loading" class="loading">Loading orders...</div>
+                <div id="orders-error" class="error hidden"></div>
+                <table class="table" id="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Items</th>
+                            <th>Total</th>
+                            <th>Pickup Time</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orders-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Menu Item</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="edit-menu-form">
+                <input type="hidden" id="edit-menu-id">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="edit-menu-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="edit-menu-description" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Price (₹)</label>
+                    <input type="number" id="edit-menu-price" required min="0">
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="edit-menu-category" required>
+                        <option value="breakfast">Breakfast</option>
+                        <option value="lunch">Lunch</option>
+                        <option value="snacks">Snacks</option>
+                        <option value="beverages">Beverages</option>
+                        <option value="dinner">Dinner</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Preparation Time (minutes)</label>
+                    <input type="number" id="edit-menu-prep-time" required min="1">
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="edit-menu-available"> Available
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Menu Item</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        let authToken = localStorage.getItem('adminToken');
+
+        // Show section
+        function showSection(section) {
+            document.querySelectorAll('.nav button').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.getElementById('dashboard-section').classList.add('hidden');
+            document.getElementById('menu-section').classList.add('hidden');
+            document.getElementById('orders-section').classList.add('hidden');
+
+            document.getElementById(`${section}-section`).classList.remove('hidden');
+
+            if (section === 'dashboard') loadDashboard();
+            if (section === 'menu') loadMenu();
+            if (section === 'orders') loadOrders();
+        }
+
+        // API calls
+        async function apiCall(endpoint, options = {}) {
+            const headers = {
+                'Content-Type': 'application/json',
+            };
+
+            if (authToken) {
+                headers['Authorization'] = `Bearer ${authToken}`;
+            }
+
+            const response = await fetch(`${API_URL}${endpoint}`, {
+                ...options,
+                headers,
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            return response.json();
+        }
+
+        // Dashboard
+        async function loadDashboard() {
+            try {
+                const orders = await apiCall('/orders');
+                const menu = await apiCall('/menu');
+
+                const today = new Date().toDateString();
+                const todayOrders = orders.filter(order => 
+                    new Date(order.createdAt).toDateString() === today
+                );
+
+                document.getElementById('total-orders').textContent = todayOrders.length;
+                document.getElementById('pending-orders').textContent = 
+                    todayOrders.filter(o => o.status === 'pending').length;
+                document.getElementById('total-revenue').textContent = 
+                    '₹' + todayOrders.reduce((sum, o) => sum + o.totalAmount, 0);
+                document.getElementById('menu-items-count').textContent = menu.length;
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+
+        // Menu
+        async function loadMenu() {
+            try {
+                document.getElementById('menu-loading').classList.remove('hidden');
+                document.getElementById('menu-error').classList.add('hidden');
+
+                const menuItems = await apiCall('/menu');
+                renderMenuTable(menuItems);
+            } catch (error) {
+                document.getElementById('menu-error').textContent = 'Error loading menu items';
+                document.getElementById('menu-error').classList.remove('hidden');
+            } finally {
+                document.getElementById('menu-loading').classList.add('hidden');
+            }
+        }
+
+        function renderMenuTable(menuItems) {
+            const tbody = document.getElementById('menu-table-body');
+            tbody.innerHTML = menuItems.map(item => `
+                <tr>
+                    <td>${item.name}</td>
+                    <td>${item.category}</td>
+                    <td>₹${item.price}</td>
+                    <td>${item.preparationTime} min</td>
+                    <td>${item.available ? '✅' : '❌'}</td>
+                    <td class="actions">
+                        <button class="btn btn-secondary" onclick="editMenuItem('${item._id}')">Edit</button>
+                        <button class="btn btn-danger" onclick="deleteMenuItem('${item._id}')">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        document.getElementById('menu-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                const menuItem = {
+                    name: document.getElementById('menu-name').value,
+                    description: document.getElementById('menu-description').value,
+                    price: parseFloat(document.getElementById('menu-price').value),
+                    category: document.getElementById('menu-category').value,
+                    preparationTime: parseInt(document.getElementById('menu-prep-time').value),
+                };
+
+                await apiCall('/menu', {
+                    method: 'POST',
+                    body: JSON.stringify(menuItem),
+                });
+
+                document.getElementById('menu-form').reset();
+                loadMenu();
+            } catch (error) {
+                alert('Error adding menu item');
+            }
+        });
+
+        async function editMenuItem(id) {
+            try {
+                const menuItem = await apiCall(`/menu/${id}`);
+                
+                document.getElementById('edit-menu-id').value = menuItem._id;
+                document.getElementById('edit-menu-name').value = menuItem.name;
+                document.getElementById('edit-menu-description').value = menuItem.description;
+                document.getElementById('edit-menu-price').value = menuItem.price;
+                document.getElementById('edit-menu-category').value = menuItem.category;
+                document.getElementById('edit-menu-prep-time').value = menuItem.preparationTime;
+                document.getElementById('edit-menu-available').checked = menuItem.available;
+
+                document.getElementById('edit-modal').classList.add('active');
+            } catch (error) {
+                alert('Error loading menu item');
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('edit-modal').classList.remove('active');
+        }
+
+        document.getElementById('edit-menu-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                const id = document.getElementById('edit-menu-id').value;
+                const menuItem = {
+                    name: document.getElementById('edit-menu-name').value,
+                    description: document.getElementById('edit-menu-description').value,
+                    price: parseFloat(document.getElementById('edit-menu-price').value),
+                    category: document.getElementById('edit-menu-category').value,
+                    preparationTime: parseInt(document.getElementById('edit-menu-prep-time').value),
+                    available: document.getElementById('edit-menu-available').checked,
+                };
+
+                await apiCall(`/menu/${id}`, {
+                    method: 'PUT',
+                    body: JSON.stringify(menuItem),
+                });
+
+                closeModal();
+                loadMenu();
+            } catch (error) {
+                alert('Error updating menu item');
+            }
+        });
+
+        async function deleteMenuItem(id) {
+            if (!confirm('Are you sure you want to delete this menu item?')) return;
+
+            try {
+                await apiCall(`/menu/${id}`, { method: 'DELETE' });
+                loadMenu();
+            } catch (error) {
+                alert('Error deleting menu item');
+            }
+        }
+
+        // Orders
+        async function loadOrders() {
+            try {
+                document.getElementById('orders-loading').classList.remove('hidden');
+                document.getElementById('orders-error').classList.add('hidden');
+
+                const status = document.getElementById('order-filter').value;
+                const endpoint = status ? `/orders?status=${status}` : '/orders';
+                const orders = await apiCall(endpoint);
+                renderOrdersTable(orders);
+            } catch (error) {
+                document.getElementById('orders-error').textContent = 'Error loading orders';
+                document.getElementById('orders-error').classList.remove('hidden');
+            } finally {
+                document.getElementById('orders-loading').classList.add('hidden');
+            }
+        }
+
+        function renderOrdersTable(orders) {
+            const tbody = document.getElementById('orders-table-body');
+            tbody.innerHTML = orders.map(order => `
+                <tr>
+                    <td>#${order._id.slice(-6)}</td>
+                    <td>${order.user?.name || 'Unknown'}</td>
+                    <td>${order.items.map(i => `${i.menuItem.name} x${i.quantity}`).join(', ')}</td>
+                    <td>₹${order.totalAmount}</td>
+                    <td>${new Date(order.pickupTime).toLocaleString()}</td>
+                    <td><span class="status-badge status-${order.status}">${order.status}</span></td>
+                    <td class="actions">
+                        <select onchange="updateOrderStatus('${order._id}', this.value)" class="btn btn-secondary">
+                            <option value="">Update Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="preparing">Preparing</option>
+                            <option value="ready">Ready</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function updateOrderStatus(orderId, status) {
+            if (!status) return;
+
+            try {
+                await apiCall(`/orders/${orderId}/status`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({ status }),
+                });
+                loadOrders();
+            } catch (error) {
+                alert('Error updating order status');
+            }
+        }
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('adminToken');
+            window.location.href = '/admin';
+        }
+
+        // Check authentication
+        function checkAuth() {
+            if (!authToken) {
+                window.location.href = '/admin';
+            }
+        }
+
+        // Initialize
+        checkAuth();
+        loadDashboard();
+    </script>
+</body>
+</html>
