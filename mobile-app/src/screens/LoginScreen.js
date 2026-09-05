@@ -43,66 +43,73 @@ const LoginScreen = ({ navigation }) => {
       style={styles.container}
     >
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Smart Canteen</Text>
-          <Text style={styles.subtitle}>Pre-order your food</Text>
-        </View>
-
-        <View style={styles.form}>
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            autoComplete="email"
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            autoComplete="password"
-          />
-
-          <TouchableOpacity
-            style={[styles.button, loading && styles.buttonDisabled]}
-            onPress={handleLogin}
-            disabled={loading}
-          >
-            <Text style={styles.buttonText}>
-              {loading ? 'Logging in...' : 'Login'}
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.linkButton}
-            onPress={() => navigation.navigate('Signup')}
-          >
-            <Text style={styles.linkText}>
-              Don't have an account? Sign up
-            </Text>
-          </TouchableOpacity>
-
-          <View style={styles.adminDivider}>
-            <View style={styles.dividerLine} />
-            <Text style={styles.dividerText}>CANTEEN STAFF</Text>
-            <View style={styles.dividerLine} />
+        <View style={styles.card}>
+          <View style={styles.header}>
+            <Text style={styles.logoIcon}>🍽️</Text>
+            <Text style={styles.title}>Smart Canteen</Text>
+            <Text style={styles.subtitle}>Sign in to browse menu & pre-order</Text>
           </View>
 
-          <TouchableOpacity
-            style={styles.adminButton}
-            onPress={() => {
-              Linking.openURL(ADMIN_URL).catch(() => {
-                Alert.alert('Error', 'Unable to open Admin Portal URL: ' + ADMIN_URL);
-              });
-            }}
-          >
-            <Text style={styles.adminButtonText}>🛡️ Open Admin Portal</Text>
-          </TouchableOpacity>
+          <View style={styles.form}>
+            <Text style={styles.inputLabel}>Email Address</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="student@canteen.com"
+              placeholderTextColor="#94A3B8"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoComplete="email"
+            />
+
+            <Text style={styles.inputLabel}>Password</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="••••••••"
+              placeholderTextColor="#94A3B8"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              autoComplete="password"
+            />
+
+            <TouchableOpacity
+              style={[styles.button, loading && styles.buttonDisabled]}
+              onPress={handleLogin}
+              disabled={loading}
+            >
+              <Text style={styles.buttonText}>
+                {loading ? 'Signing in...' : 'Sign In'}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.linkButton}
+              onPress={() => navigation.navigate('Signup')}
+            >
+              <Text style={styles.linkText}>
+                New here? <Text style={styles.linkTextBold}>Create an Account</Text>
+              </Text>
+            </TouchableOpacity>
+
+            <View style={styles.adminDivider}>
+              <View style={styles.dividerLine} />
+              <Text style={styles.dividerText}>CANTEEN STAFF</Text>
+              <View style={styles.dividerLine} />
+            </View>
+
+            <TouchableOpacity
+              style={styles.adminButton}
+              onPress={() => {
+                Linking.openURL(ADMIN_URL).catch(() => {
+                  Alert.alert('Error', 'Unable to open Admin Portal URL: ' + ADMIN_URL);
+                });
+              }}
+            >
+              <Text style={styles.adminButtonText}>🛡️ Open Admin Portal</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -112,93 +119,123 @@ const LoginScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#F8FAFC',
   },
   scrollContent: {
     flexGrow: 1,
     justifyContent: 'center',
     padding: 20,
   },
+  card: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 24,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+  },
   header: {
     alignItems: 'center',
-    marginBottom: 40,
+    marginBottom: 24,
+  },
+  logoIcon: {
+    fontSize: 42,
+    marginBottom: 6,
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#4CAF50',
-    marginBottom: 10,
+    fontSize: 26,
+    fontWeight: '700',
+    color: '#1E293B',
+    letterSpacing: -0.5,
+    marginBottom: 4,
   },
   subtitle: {
-    fontSize: 16,
-    color: '#666',
+    fontSize: 14,
+    color: '#64748B',
   },
   form: {
     width: '100%',
   },
+  inputLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#334155',
+    marginBottom: 6,
+  },
   input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 15,
-    marginBottom: 15,
-    fontSize: 16,
+    backgroundColor: '#F8FAFC',
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    marginBottom: 16,
+    fontSize: 15,
+    color: '#1E293B',
   },
   button: {
-    backgroundColor: '#4CAF50',
-    borderRadius: 8,
-    padding: 15,
+    backgroundColor: '#059669',
+    borderRadius: 10,
+    paddingVertical: 14,
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: 4,
+    elevation: 2,
+    shadowColor: '#059669',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
   },
   buttonDisabled: {
-    backgroundColor: '#a5d6a7',
+    backgroundColor: '#A7F3D0',
   },
   buttonText: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '700',
   },
   linkButton: {
-    marginTop: 20,
+    marginTop: 18,
     alignItems: 'center',
   },
   linkText: {
-    color: '#4CAF50',
+    color: '#64748B',
     fontSize: 14,
+  },
+  linkTextBold: {
+    color: '#059669',
+    fontWeight: '700',
   },
   adminDivider: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 25,
+    marginVertical: 22,
   },
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: '#eee',
+    backgroundColor: '#E2E8F0',
   },
   dividerText: {
     marginHorizontal: 10,
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#999',
-    letterSpacing: 1,
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#94A3B8',
+    letterSpacing: 0.8,
   },
   adminButton: {
-    backgroundColor: '#37474F',
-    borderRadius: 8,
-    padding: 14,
+    backgroundColor: '#1E293B',
+    borderRadius: 10,
+    paddingVertical: 13,
     alignItems: 'center',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
   },
   adminButtonText: {
-    color: '#fff',
-    fontSize: 15,
-    fontWeight: 'bold',
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '700',
   },
 });
 

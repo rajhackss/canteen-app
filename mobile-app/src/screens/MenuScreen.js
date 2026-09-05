@@ -131,7 +131,7 @@ const MenuScreen = ({ navigation }) => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#4CAF50" />
+        <ActivityIndicator size="large" color="#059669" />
         <Text style={styles.loadingText}>Loading menu...</Text>
       </View>
     );
@@ -140,7 +140,16 @@ const MenuScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Menu</Text>
+        <View style={styles.headerRow}>
+          <View>
+            <Text style={styles.headerTitle}>🍽️ Smart Canteen</Text>
+            <Text style={styles.headerSubtitle}>Order fresh meals & snacks</Text>
+          </View>
+          <View style={styles.liveBadge}>
+            <View style={styles.liveDot} />
+            <Text style={styles.liveText}>Live</Text>
+          </View>
+        </View>
       </View>
 
       <View style={styles.categoryContainer}>
@@ -160,11 +169,11 @@ const MenuScreen = ({ navigation }) => {
         keyExtractor={(item) => item._id}
         contentContainerStyle={styles.menuList}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#059669']} />
         }
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>No items available</Text>
+            <Text style={styles.emptyText}>No items available in this category</Text>
           </View>
         }
       />
@@ -175,87 +184,131 @@ const MenuScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#F8FAFC',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#F8FAFC',
   },
   loadingText: {
     marginTop: 10,
-    fontSize: 16,
-    color: '#666',
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#64748B',
   },
   header: {
-    backgroundColor: '#4CAF50',
-    padding: 20,
-    paddingTop: 40,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
-  },
-  categoryContainer: {
-    backgroundColor: '#fff',
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-  },
-  categoryList: {
-    paddingHorizontal: 15,
-  },
-  categoryButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    marginRight: 10,
-    backgroundColor: '#f0f0f0',
-  },
-  categoryButtonActive: {
-    backgroundColor: '#4CAF50',
-  },
-  categoryButtonText: {
-    fontSize: 14,
-    color: '#666',
-    fontWeight: '500',
-  },
-  categoryButtonTextActive: {
-    color: '#fff',
-  },
-  menuList: {
-    padding: 15,
-  },
-  menuItem: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    marginBottom: 15,
-    elevation: 2,
+    backgroundColor: '#059669',
+    paddingTop: 45,
+    paddingBottom: 16,
+    paddingHorizontal: 20,
+    elevation: 3,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  headerTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    letterSpacing: -0.5,
+  },
+  headerSubtitle: {
+    fontSize: 13,
+    color: 'rgba(255, 255, 255, 0.85)',
+    marginTop: 2,
+  },
+  liveBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  liveDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: '#4ADE80',
+    marginRight: 5,
+  },
+  liveText: {
+    fontSize: 12,
+    color: '#FFFFFF',
+    fontWeight: '600',
+  },
+  categoryContainer: {
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E2E8F0',
+  },
+  categoryList: {
+    paddingHorizontal: 16,
+  },
+  categoryButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 7,
+    borderRadius: 20,
+    marginRight: 8,
+    backgroundColor: '#F1F5F9',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  categoryButtonActive: {
+    backgroundColor: '#059669',
+    borderColor: '#059669',
+  },
+  categoryButtonText: {
+    fontSize: 13,
+    color: '#64748B',
+    fontWeight: '600',
+  },
+  categoryButtonTextActive: {
+    color: '#FFFFFF',
+  },
+  menuList: {
+    padding: 16,
+  },
+  menuItem: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    marginBottom: 14,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+  },
   menuItemContent: {
     flexDirection: 'row',
-    padding: 15,
+    padding: 16,
     alignItems: 'center',
   },
   menuItemInfo: {
     flex: 1,
   },
   menuItemName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 5,
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#1E293B',
+    marginBottom: 4,
   },
   menuItemDescription: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 8,
+    fontSize: 13,
+    color: '#64748B',
+    lineHeight: 18,
+    marginBottom: 10,
   },
   menuItemMeta: {
     flexDirection: 'row',
@@ -263,37 +316,48 @@ const styles = StyleSheet.create({
   },
   menuItemPrice: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#4CAF50',
-    marginRight: 15,
+    fontWeight: '700',
+    color: '#059669',
+    marginRight: 12,
   },
   menuItemTime: {
     fontSize: 12,
-    color: '#999',
+    color: '#64748B',
+    backgroundColor: '#F1F5F9',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+    overflow: 'hidden',
   },
   addButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#4CAF50',
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: '#10B981',
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 10,
+    marginLeft: 12,
+    elevation: 2,
+    shadowColor: '#10B981',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
   },
   addButtonText: {
-    fontSize: 24,
-    color: '#fff',
+    fontSize: 22,
+    color: '#FFFFFF',
     fontWeight: 'bold',
+    marginTop: -2,
   },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 50,
+    paddingVertical: 60,
   },
   emptyText: {
-    fontSize: 16,
-    color: '#999',
+    fontSize: 15,
+    color: '#94A3B8',
   },
 });
 

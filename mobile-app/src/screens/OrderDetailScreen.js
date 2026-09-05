@@ -72,29 +72,29 @@ const OrderDetailScreen = ({ route, navigation }) => {
     );
   };
 
-  const getStatusColor = (status) => {
+  const getStatusStyle = (status) => {
     switch (status) {
       case 'pending':
-        return '#FF9800';
+        return { bg: '#FEF3C7', text: '#B45309', border: '#FDE68A' };
       case 'confirmed':
-        return '#2196F3';
+        return { bg: '#F0F9FF', text: '#0369A1', border: '#BAE6FD' };
       case 'preparing':
-        return '#9C27B0';
+        return { bg: '#FAF5FF', text: '#7E22CE', border: '#E9D5FF' };
       case 'ready':
-        return '#4CAF50';
+        return { bg: '#F0FDF4', text: '#15803D', border: '#BBF7D0' };
       case 'completed':
-        return '#8BC34A';
+        return { bg: '#F0FDF4', text: '#166534', border: '#86EFAC' };
       case 'cancelled':
-        return '#F44336';
+        return { bg: '#FEF2F2', text: '#B91C1C', border: '#FECACA' };
       default:
-        return '#666';
+        return { bg: '#F1F5F9', text: '#64748B', border: '#E2E8F0' };
     }
   };
 
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#4CAF50" />
+        <ActivityIndicator size="large" color="#059669" />
         <Text style={styles.loadingText}>Loading order details...</Text>
       </View>
     );
@@ -108,11 +108,23 @@ const OrderDetailScreen = ({ route, navigation }) => {
     );
   }
 
+  const statusStyle = getStatusStyle(order.status);
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Order Details</Text>
-        <Text style={styles.orderId}>#{order._id.slice(-6)}</Text>
+        <View style={styles.headerRow}>
+          <View>
+            <Text style={styles.headerTitle}>Order #{order._id.slice(-6).toUpperCase()}</Text>
+            <Text style={styles.headerSubtitle}>
+              Placed on {new Date(order.createdAt).toLocaleDateString()}
+            </Text>
+          </View>
+          <View style={styles.liveBadge}>
+            <View style={styles.liveDot} />
+            <Text style={styles.liveText}>Live Tracking</Text>
+          </View>
+        </View>
       </View>
 
       <ScrollView style={styles.content}>
@@ -121,10 +133,13 @@ const OrderDetailScreen = ({ route, navigation }) => {
             <View
               style={[
                 styles.statusBadge,
-                { backgroundColor: getStatusColor(order.status) },
+                {
+                  backgroundColor: statusStyle.bg,
+                  borderColor: statusStyle.border,
+                },
               ]}
             >
-              <Text style={styles.statusText}>
+              <Text style={[styles.statusText, { color: statusStyle.text }]}>
                 {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
               </Text>
             </View>
@@ -132,29 +147,27 @@ const OrderDetailScreen = ({ route, navigation }) => {
 
           <View style={styles.orderInfo}>
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Order Date:</Text>
+              <Text style={styles.infoLabel}>Order Time:</Text>
               <Text style={styles.infoValue}>
-                {new Date(order.createdAt).toLocaleString()}
+                {new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </Text>
             </View>
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Pickup Time:</Text>
+              <Text style={styles.infoLabel}>Pickup Scheduled:</Text>
               <Text style={styles.infoValue}>
-                {new Date(order.pickupTime).toLocaleString()}
+                {new Date(order.pickupTime).toLocaleString([], { hour: '2-digit', minute: '2-digit', month: 'short', day: 'numeric' })}
               </Text>
             </View>
             <View style={styles.infoRow}>
               <Text style={styles.infoLabel}>Payment Method:</Text>
               <Text style={styles.infoValue}>
-                {order.paymentMethod.charAt(0).toUpperCase() +
-                  order.paymentMethod.slice(1)}
+                {order.paymentMethod.toUpperCase()}
               </Text>
             </View>
             <View style={styles.infoRow}>
               <Text style={styles.infoLabel}>Payment Status:</Text>
               <Text style={styles.infoValue}>
-                {order.paymentStatus.charAt(0).toUpperCase() +
-                  order.paymentStatus.slice(1)}
+                {order.paymentStatus.charAt(0).toUpperCase() + order.paymentStatus.slice(1)}
               </Text>
             </View>
           </View>
@@ -165,7 +178,7 @@ const OrderDetailScreen = ({ route, navigation }) => {
           {order.items.map((item, index) => (
             <View key={index} style={styles.orderItem}>
               <View style={styles.itemInfo}>
-                <Text style={styles.itemName}>{item.menuItem.name}</Text>
+                <Text style={styles.itemName}>{item.menuItem?.name || 'Item'}</Text>
                 <Text style={styles.itemPrice}>₹{item.price} each</Text>
               </View>
               <View style={styles.itemQuantity}>
@@ -176,20 +189,25 @@ const OrderDetailScreen = ({ route, navigation }) => {
           ))}
         </View>
 
-        {order.specialInstructions && (
+        {order.specialInstructions ? (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Special Instructions</Text>
             <Text style={styles.instructions}>{order.specialInstructions}</Text>
           </View>
-        )}
+        ) : null}
 
         <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Payment Summary</Text>
           <View style={styles.totalRow}>
-            <Text style={styles.totalLabel}>Subtotal</Text>
+            <Text style={styles.totalLabel}>Items Subtotal:</Text>
             <Text style={styles.totalValue}>₹{order.totalAmount}</Text>
           </View>
+          <View style={styles.totalRow}>
+            <Text style={styles.totalLabel}>Taxes & Fees:</Text>
+            <Text style={styles.totalValue}>₹0</Text>
+          </View>
           <View style={[styles.totalRow, styles.finalTotal]}>
-            <Text style={styles.finalTotalLabel}>Total</Text>
+            <Text style={styles.finalTotalLabel}>Grand Total:</Text>
             <Text style={styles.finalTotalValue}>₹{order.totalAmount}</Text>
           </View>
         </View>
@@ -199,9 +217,11 @@ const OrderDetailScreen = ({ route, navigation }) => {
             style={styles.cancelButton}
             onPress={handleCancelOrder}
           >
-            <Text style={styles.cancelButtonText}>Cancel Order</Text>
+            <Text style={styles.cancelButtonText}>Cancel This Order</Text>
           </TouchableOpacity>
         )}
+
+        <View style={{ height: 30 }} />
       </ScrollView>
     </View>
   );
@@ -210,177 +230,216 @@ const OrderDetailScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#F8FAFC',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#F8FAFC',
   },
   loadingText: {
     marginTop: 10,
-    fontSize: 16,
-    color: '#666',
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#64748B',
   },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#F8FAFC',
+    padding: 20,
   },
   errorText: {
-    fontSize: 18,
-    color: '#999',
+    fontSize: 16,
+    color: '#EF4444',
   },
   header: {
-    backgroundColor: '#4CAF50',
-    padding: 20,
-    paddingTop: 40,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 5,
-  },
-  orderId: {
-    fontSize: 14,
-    color: '#fff',
-    opacity: 0.9,
-  },
-  content: {
-    flex: 1,
-    padding: 15,
-  },
-  section: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 15,
-    marginBottom: 15,
-    elevation: 2,
+    backgroundColor: '#059669',
+    paddingTop: 45,
+    paddingBottom: 16,
+    paddingHorizontal: 20,
+    elevation: 3,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    letterSpacing: -0.5,
+  },
+  headerSubtitle: {
+    fontSize: 13,
+    color: 'rgba(255, 255, 255, 0.85)',
+    marginTop: 2,
+  },
+  liveBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  liveDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: '#4ADE80',
+    marginRight: 5,
+  },
+  liveText: {
+    fontSize: 11,
+    color: '#FFFFFF',
+    fontWeight: '600',
+  },
+  content: {
+    flex: 1,
+    padding: 16,
+  },
+  section: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    padding: 16,
+    marginBottom: 14,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+  },
   statusContainer: {
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: 12,
   },
   statusBadge: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 999,
+    borderWidth: 1,
   },
   statusText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 14,
+    fontWeight: '700',
   },
   orderInfo: {
     borderTopWidth: 1,
-    borderTopColor: '#f0f0f0',
-    paddingTop: 15,
+    borderTopColor: '#F1F5F9',
+    paddingTop: 12,
   },
   infoRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 10,
+    marginBottom: 8,
   },
   infoLabel: {
-    fontSize: 14,
-    color: '#666',
-  },
-  infoValue: {
-    fontSize: 14,
-    color: '#333',
+    fontSize: 13,
+    color: '#64748B',
     fontWeight: '500',
   },
+  infoValue: {
+    fontSize: 13,
+    color: '#1E293B',
+    fontWeight: '600',
+  },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 15,
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1E293B',
+    marginBottom: 12,
   },
   orderItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 10,
+    paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    borderBottomColor: '#F1F5F9',
   },
   itemInfo: {
     flex: 1,
   },
   itemName: {
-    fontSize: 16,
-    color: '#333',
-    marginBottom: 5,
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#1E293B',
+    marginBottom: 2,
   },
   itemPrice: {
     fontSize: 12,
-    color: '#999',
+    color: '#64748B',
   },
   itemQuantity: {
     alignItems: 'flex-end',
   },
   quantityText: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 5,
+    fontSize: 13,
+    color: '#64748B',
+    marginBottom: 2,
   },
   itemTotal: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#4CAF50',
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#059669',
   },
   instructions: {
-    fontSize: 14,
-    color: '#666',
-    lineHeight: 20,
+    fontSize: 13,
+    color: '#475569',
+    lineHeight: 18,
   },
   totalRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 10,
+    marginBottom: 8,
   },
   totalLabel: {
-    fontSize: 14,
-    color: '#666',
+    fontSize: 13,
+    color: '#64748B',
   },
   totalValue: {
-    fontSize: 14,
-    color: '#333',
+    fontSize: 13,
+    color: '#1E293B',
+    fontWeight: '600',
   },
   finalTotal: {
-    borderTopWidth: 2,
-    borderTopColor: '#4CAF50',
+    borderTopWidth: 1.5,
+    borderTopColor: '#059669',
     paddingTop: 10,
-    marginTop: 5,
+    marginTop: 6,
   },
   finalTotalLabel: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1E293B',
   },
   finalTotalValue: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#4CAF50',
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#059669',
   },
   cancelButton: {
-    backgroundColor: '#F44336',
-    borderRadius: 12,
-    padding: 15,
+    backgroundColor: '#EF4444',
+    borderRadius: 10,
+    padding: 14,
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: 6,
+    elevation: 2,
   },
   cancelButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '700',
   },
 });
 

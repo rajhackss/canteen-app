@@ -27,8 +27,31 @@ const MainTabs = () => {
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarActiveTintColor: '#4CAF50',
-        tabBarInactiveTintColor: '#999',
+        tabBarActiveTintColor: '#059669',
+        tabBarInactiveTintColor: '#64748B',
+        tabBarStyle: {
+          backgroundColor: '#FFFFFF',
+          borderTopColor: '#E2E8F0',
+          borderTopWidth: 1,
+          height: 62,
+          paddingBottom: 8,
+          paddingTop: 6,
+          elevation: 8,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: -2 },
+          shadowOpacity: 0.05,
+          shadowRadius: 6,
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '600',
+        },
+        tabBarBadgeStyle: {
+          backgroundColor: '#10B981',
+          color: '#FFFFFF',
+          fontSize: 11,
+          fontWeight: 'bold',
+        },
         headerShown: false,
       }}
     >
@@ -37,7 +60,7 @@ const MainTabs = () => {
         component={MenuScreen}
         options={{
           tabBarLabel: 'Menu',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 24, color }}>🍽️</Text>,
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22, color }}>🍽️</Text>,
         }}
       />
       <Tab.Screen
@@ -45,7 +68,7 @@ const MainTabs = () => {
         component={CartScreen}
         options={{
           tabBarLabel: 'Cart',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 24, color }}>🛒</Text>,
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22, color }}>🛒</Text>,
           tabBarBadge: cartCount > 0 ? cartCount : undefined,
         }}
       />
@@ -54,7 +77,7 @@ const MainTabs = () => {
         component={OrdersScreen}
         options={{
           tabBarLabel: 'Orders',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 24, color }}>📋</Text>,
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22, color }}>📋</Text>,
         }}
       />
       <Tab.Screen
@@ -62,7 +85,7 @@ const MainTabs = () => {
         component={ProfileScreen}
         options={{
           tabBarLabel: 'Profile',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 24, color }}>👤</Text>,
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22, color }}>👤</Text>,
         }}
       />
     </Tab.Navigator>
@@ -78,7 +101,22 @@ const AppNavigator = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+          headerStyle: {
+            backgroundColor: '#059669',
+            elevation: 0,
+            shadowOpacity: 0,
+          },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: {
+            fontWeight: '700',
+            fontSize: 18,
+          },
+          headerBackTitleVisible: false,
+        }}
+      >
         {!isAuthenticated ? (
           <>
             <Stack.Screen name="Login" component={LoginScreen} />

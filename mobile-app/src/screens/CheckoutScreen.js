@@ -73,14 +73,10 @@ const CheckoutScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Checkout</Text>
-      </View>
-
       <ScrollView style={styles.content}>
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Order Summary</Text>
-          {cartItems.map((item, index) => (
+          {cartItems.map((item) => (
             <View key={item.menuItem._id} style={styles.orderItem}>
               <Text style={styles.itemName}>{item.menuItem.name}</Text>
               <Text style={styles.itemQuantity}>x{item.quantity}</Text>
@@ -88,22 +84,27 @@ const CheckoutScreen = ({ navigation }) => {
             </View>
           ))}
           <View style={styles.totalRow}>
-            <Text style={styles.totalLabel}>Total</Text>
+            <Text style={styles.totalLabel}>Total Payable</Text>
             <Text style={styles.totalAmount}>₹{getCartTotal()}</Text>
           </View>
         </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Pickup Details</Text>
+          <Text style={styles.inputLabel}>Pickup Time</Text>
           <TextInput
             style={styles.input}
-            placeholder="Pickup Time (e.g., 12:30 PM)"
+            placeholder="e.g., 12:30 PM (or in 15 mins)"
+            placeholderTextColor="#94A3B8"
             value={pickupTime}
             onChangeText={setPickupTime}
           />
+
+          <Text style={styles.inputLabel}>Special Instructions (Optional)</Text>
           <TextInput
             style={[styles.input, styles.textArea]}
-            placeholder="Special Instructions (optional)"
+            placeholder="Less spicy, extra chutney, etc."
+            placeholderTextColor="#94A3B8"
             value={specialInstructions}
             onChangeText={setSpecialInstructions}
             multiline
@@ -113,39 +114,41 @@ const CheckoutScreen = ({ navigation }) => {
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Payment Method</Text>
-          {['cash', 'card', 'upi'].map((method) => (
-            <TouchableOpacity
-              key={method}
-              style={[
-                styles.paymentOption,
-                paymentMethod === method && styles.paymentOptionSelected,
-              ]}
-              onPress={() => setPaymentMethod(method)}
-            >
-              <Text
+          <View style={styles.paymentGrid}>
+            {[
+              { id: 'cash', label: '💵 Cash at Counter' },
+              { id: 'upi', label: '📱 UPI Payment' },
+              { id: 'card', label: '💳 Card' },
+            ].map((option) => (
+              <TouchableOpacity
+                key={option.id}
                 style={[
-                  styles.paymentOptionText,
-                  paymentMethod === method && styles.paymentOptionTextSelected,
+                  styles.paymentOption,
+                  paymentMethod === option.id && styles.paymentOptionSelected,
                 ]}
+                onPress={() => setPaymentMethod(option.id)}
               >
-                {method.charAt(0).toUpperCase() + method.slice(1)}
-              </Text>
-            </TouchableOpacity>
-          ))}
+                <Text
+                  style={[
+                    styles.paymentOptionText,
+                    paymentMethod === option.id && styles.paymentOptionTextSelected,
+                  ]}
+                >
+                  {option.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Delivery Address</Text>
-          <Text style={styles.addressText}>
-            {user?.name}
-          </Text>
-          <Text style={styles.addressText}>
-            {user?.phone}
-          </Text>
-          <Text style={styles.addressText}>
-            {user?.email}
-          </Text>
+          <Text style={styles.sectionTitle}>Customer Contact</Text>
+          <Text style={styles.addressText}>👤 {user?.name || 'Customer'}</Text>
+          {user?.phone ? <Text style={styles.addressText}>📞 {user?.phone}</Text> : null}
+          <Text style={styles.addressText}>✉️ {user?.email || ''}</Text>
         </View>
+
+        <View style={{ height: 20 }} />
       </ScrollView>
 
       <View style={styles.footer}>
@@ -158,7 +161,7 @@ const CheckoutScreen = ({ navigation }) => {
             <ActivityIndicator color="#fff" />
           ) : (
             <Text style={styles.placeOrderButtonText}>
-              Place Order - ₹{getCartTotal()}
+              Confirm & Place Order • ₹{getCartTotal()}
             </Text>
           )}
         </TouchableOpacity>
@@ -170,38 +173,30 @@ const CheckoutScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-  header: {
-    backgroundColor: '#4CAF50',
-    padding: 20,
-    paddingTop: 40,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
+    backgroundColor: '#F8FAFC',
   },
   content: {
     flex: 1,
-    padding: 15,
+    padding: 16,
   },
   section: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 15,
-    marginBottom: 15,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    padding: 16,
+    marginBottom: 14,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
     elevation: 2,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 15,
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1E293B',
+    marginBottom: 12,
   },
   orderItem: {
     flexDirection: 'row',
@@ -209,97 +204,122 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    borderBottomColor: '#F1F5F9',
   },
   itemName: {
     flex: 1,
-    fontSize: 16,
-    color: '#333',
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#1E293B',
   },
   itemQuantity: {
-    fontSize: 14,
-    color: '#666',
+    fontSize: 13,
+    color: '#64748B',
     marginHorizontal: 10,
   },
   itemPrice: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#4CAF50',
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#059669',
   },
   totalRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 15,
-    borderTopWidth: 2,
-    borderTopColor: '#4CAF50',
+    paddingTop: 12,
+    marginTop: 4,
+    borderTopWidth: 1.5,
+    borderTopColor: '#059669',
   },
   totalLabel: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1E293B',
   },
   totalAmount: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#4CAF50',
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#059669',
   },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 15,
-    fontSize: 16,
-  },
-  textArea: {
-    height: 80,
-    textAlignVertical: 'top',
-  },
-  paymentOption: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 15,
-    marginBottom: 10,
-    alignItems: 'center',
-  },
-  paymentOptionSelected: {
-    backgroundColor: '#4CAF50',
-    borderColor: '#4CAF50',
-  },
-  paymentOptionText: {
-    fontSize: 16,
-    color: '#333',
-  },
-  paymentOptionTextSelected: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  addressText: {
-    fontSize: 16,
-    color: '#666',
+  inputLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#334155',
     marginBottom: 5,
   },
+  input: {
+    backgroundColor: '#F8FAFC',
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 11,
+    marginBottom: 12,
+    fontSize: 15,
+    color: '#1E293B',
+  },
+  textArea: {
+    minHeight: 70,
+    textAlignVertical: 'top',
+  },
+  paymentGrid: {
+    gap: 8,
+  },
+  paymentOption: {
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
+    borderRadius: 10,
+    padding: 13,
+    backgroundColor: '#F8FAFC',
+  },
+  paymentOptionSelected: {
+    backgroundColor: '#ECFDF5',
+    borderColor: '#10B981',
+  },
+  paymentOptionText: {
+    fontSize: 15,
+    color: '#475569',
+    fontWeight: '500',
+  },
+  paymentOptionTextSelected: {
+    color: '#059669',
+    fontWeight: '700',
+  },
+  addressText: {
+    fontSize: 14,
+    color: '#475569',
+    marginBottom: 4,
+  },
   footer: {
-    backgroundColor: '#fff',
-    padding: 20,
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    paddingBottom: 24,
     borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
+    borderTopColor: '#E2E8F0',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
   },
   placeOrderButton: {
-    backgroundColor: '#4CAF50',
-    borderRadius: 12,
-    padding: 15,
+    backgroundColor: '#10B981',
+    borderRadius: 10,
+    paddingVertical: 14,
     alignItems: 'center',
+    elevation: 2,
+    shadowColor: '#10B981',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
   },
   buttonDisabled: {
-    backgroundColor: '#a5d6a7',
+    backgroundColor: '#A7F3D0',
   },
   placeOrderButtonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '700',
   },
 });
 

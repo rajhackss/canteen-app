@@ -85,8 +85,10 @@ const CartScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>My Cart</Text>
-        <Text style={styles.headerSubtitle}>{getCartCount()} items</Text>
+        <View>
+          <Text style={styles.headerTitle}>🛒 My Cart</Text>
+          <Text style={styles.headerSubtitle}>{getCartCount()} items selected</Text>
+        </View>
       </View>
 
       <FlatList
@@ -98,11 +100,11 @@ const CartScreen = ({ navigation }) => {
 
       <View style={styles.footer}>
         <View style={styles.totalContainer}>
-          <Text style={styles.totalLabel}>Total:</Text>
+          <Text style={styles.totalLabel}>Grand Total:</Text>
           <Text style={styles.totalAmount}>₹{getCartTotal()}</Text>
         </View>
         <TouchableOpacity style={styles.checkoutButton} onPress={handleCheckout}>
-          <Text style={styles.checkoutButtonText}>Proceed to Checkout</Text>
+          <Text style={styles.checkoutButtonText}>Proceed to Checkout ➔</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -112,146 +114,174 @@ const CartScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#F8FAFC',
   },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    padding: 30,
+    backgroundColor: '#F8FAFC',
   },
   emptyText: {
     fontSize: 18,
-    color: '#999',
+    fontWeight: '600',
+    color: '#64748B',
     marginBottom: 20,
   },
   browseButton: {
-    backgroundColor: '#4CAF50',
-    paddingHorizontal: 30,
-    paddingVertical: 15,
+    backgroundColor: '#059669',
+    paddingHorizontal: 26,
+    paddingVertical: 12,
     borderRadius: 8,
+    elevation: 2,
   },
   browseButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '700',
   },
   header: {
-    backgroundColor: '#4CAF50',
-    padding: 20,
-    paddingTop: 40,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
-  },
-  headerSubtitle: {
-    fontSize: 14,
-    color: '#fff',
-    opacity: 0.9,
-  },
-  cartList: {
-    padding: 15,
-  },
-  cartItem: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 15,
-    marginBottom: 15,
-    elevation: 2,
+    backgroundColor: '#059669',
+    paddingTop: 45,
+    paddingBottom: 16,
+    paddingHorizontal: 20,
+    elevation: 3,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
+  headerTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    letterSpacing: -0.5,
+  },
+  headerSubtitle: {
+    fontSize: 13,
+    color: 'rgba(255, 255, 255, 0.85)',
+    marginTop: 2,
+  },
+  cartList: {
+    padding: 16,
+  },
+  cartItem: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    padding: 16,
+    marginBottom: 14,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+  },
   cartItemInfo: {
-    marginBottom: 10,
+    marginBottom: 12,
   },
   cartItemName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 5,
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#1E293B',
+    marginBottom: 4,
   },
   cartItemPrice: {
-    fontSize: 14,
-    color: '#666',
+    fontSize: 13,
+    color: '#64748B',
   },
   quantityControls: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 12,
   },
   quantityButton: {
-    width: 35,
-    height: 35,
-    borderRadius: 17,
-    backgroundColor: '#f0f0f0',
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    backgroundColor: '#F1F5F9',
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
   },
   quantityButtonText: {
-    fontSize: 20,
-    color: '#333',
+    fontSize: 18,
+    color: '#1E293B',
     fontWeight: 'bold',
   },
   quantity: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginHorizontal: 20,
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1E293B',
+    marginHorizontal: 16,
   },
   cartItemTotal: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
+    borderTopColor: '#F1F5F9',
     paddingTop: 10,
   },
   cartItemTotalText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#4CAF50',
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#059669',
   },
   removeButton: {
-    padding: 5,
+    padding: 6,
+    backgroundColor: '#FEF2F2',
+    borderRadius: 6,
   },
   removeButtonText: {
-    fontSize: 20,
+    fontSize: 16,
   },
   footer: {
-    backgroundColor: '#fff',
-    padding: 20,
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    paddingBottom: 24,
     borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
+    borderTopColor: '#E2E8F0',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
   },
   totalContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: 12,
   },
   totalLabel: {
-    fontSize: 18,
-    color: '#666',
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#64748B',
   },
   totalAmount: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#4CAF50',
+    fontSize: 26,
+    fontWeight: '700',
+    color: '#059669',
   },
   checkoutButton: {
-    backgroundColor: '#4CAF50',
-    borderRadius: 12,
-    padding: 15,
+    backgroundColor: '#10B981',
+    borderRadius: 10,
+    padding: 14,
     alignItems: 'center',
+    elevation: 2,
+    shadowColor: '#10B981',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
   },
   checkoutButtonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '700',
   },
 });
 

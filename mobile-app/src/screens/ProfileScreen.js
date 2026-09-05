@@ -47,7 +47,10 @@ const ProfileScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Profile</Text>
+        <View>
+          <Text style={styles.headerTitle}>👤 My Profile</Text>
+          <Text style={styles.headerSubtitle}>Account & preferences</Text>
+        </View>
       </View>
 
       <ScrollView style={styles.content}>
@@ -59,14 +62,20 @@ const ProfileScreen = ({ navigation }) => {
           </View>
           <Text style={styles.userName}>{user?.name || 'User'}</Text>
           <Text style={styles.userEmail}>{user?.email || ''}</Text>
-          <Text style={styles.userPhone}>{user?.phone || ''}</Text>
+          {user?.phone ? <Text style={styles.userPhone}>{user?.phone}</Text> : null}
+          <View style={styles.roleBadge}>
+            <Text style={styles.roleText}>{user?.role?.toUpperCase() || 'STUDENT'}</Text>
+          </View>
         </View>
 
         <View style={styles.menuSection}>
           {menuItems.map((item, index) => (
             <TouchableOpacity
               key={index}
-              style={styles.menuItem}
+              style={[
+                styles.menuItem,
+                index === menuItems.length - 1 && { borderBottomWidth: 0 },
+              ]}
               onPress={item.onPress}
             >
               <View style={styles.menuItemLeft}>
@@ -86,10 +95,10 @@ const ProfileScreen = ({ navigation }) => {
         </View>
 
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Text style={styles.logoutButtonText}>Logout</Text>
+          <Text style={styles.logoutButtonText}>Log Out</Text>
         </TouchableOpacity>
 
-        <Text style={styles.version}>Smart Canteen v1.0.0</Text>
+        <Text style={styles.version}>Smart Canteen App • v1.0.0</Text>
       </ScrollView>
     </View>
   );
@@ -98,130 +107,175 @@ const ProfileScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#F8FAFC',
   },
   header: {
-    backgroundColor: '#4CAF50',
-    padding: 20,
-    paddingTop: 40,
+    backgroundColor: '#059669',
+    paddingTop: 45,
+    paddingBottom: 16,
+    paddingHorizontal: 20,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    letterSpacing: -0.5,
+  },
+  headerSubtitle: {
+    fontSize: 13,
+    color: 'rgba(255, 255, 255, 0.85)',
+    marginTop: 2,
   },
   content: {
     flex: 1,
-    padding: 15,
+    padding: 16,
   },
   profileCard: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 20,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    padding: 24,
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
     elevation: 2,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
   },
   avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: '#4CAF50',
+    width: 76,
+    height: 76,
+    borderRadius: 38,
+    backgroundColor: '#059669',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: 12,
+    elevation: 3,
+    shadowColor: '#059669',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
   },
   avatarText: {
     fontSize: 32,
-    color: '#fff',
+    color: '#FFFFFF',
     fontWeight: 'bold',
   },
   userName: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 5,
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#1E293B',
+    marginBottom: 4,
   },
   userEmail: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 5,
+    fontSize: 14,
+    color: '#64748B',
+    marginBottom: 4,
   },
   userPhone: {
-    fontSize: 14,
-    color: '#999',
+    fontSize: 13,
+    color: '#94A3B8',
+    marginBottom: 8,
+  },
+  roleBadge: {
+    backgroundColor: '#ECFDF5',
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
+    marginTop: 4,
+  },
+  roleText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#059669',
+    letterSpacing: 0.5,
   },
   menuSection: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    marginBottom: 20,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
     elevation: 2,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    overflow: 'hidden',
   },
   menuItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 15,
+    padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    borderBottomColor: '#F1F5F9',
   },
   menuItemLeft: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   menuIcon: {
-    fontSize: 24,
-    marginRight: 15,
+    fontSize: 20,
+    marginRight: 14,
   },
   menuTitle: {
-    fontSize: 16,
-    color: '#333',
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#1E293B',
   },
   menuItemRight: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   badge: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#10B981',
     borderRadius: 10,
     paddingHorizontal: 8,
     paddingVertical: 2,
-    marginRight: 10,
+    marginRight: 8,
   },
   badgeText: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontSize: 12,
     fontWeight: 'bold',
   },
   chevron: {
-    fontSize: 24,
-    color: '#999',
+    fontSize: 22,
+    color: '#94A3B8',
+    fontWeight: '300',
   },
   logoutButton: {
-    backgroundColor: '#F44336',
-    borderRadius: 12,
-    padding: 15,
+    backgroundColor: '#EF4444',
+    borderRadius: 10,
+    padding: 14,
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 16,
+    elevation: 2,
+    shadowColor: '#EF4444',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
   },
   logoutButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '700',
   },
   version: {
     textAlign: 'center',
     fontSize: 12,
-    color: '#999',
-    marginBottom: 20,
+    color: '#94A3B8',
+    marginBottom: 24,
   },
 });
 
