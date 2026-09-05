@@ -1,332 +1,246 @@
-# Smart Canteen Pre-Order App
+# Smart Canteen App 🍽️
 
-A comprehensive mobile application for pre-ordering food from the canteen with an admin panel for canteen staff management.
+[![React Native](https://img.shields.io/badge/React_Native-0.86.3-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactnative.dev/)
+[![Expo](https://img.shields.io/badge/Expo-SDK_57-000020?style=for-the-badge&logo=expo&logoColor=white)](https://expo.dev/)
+[![Node.js](https://img.shields.io/badge/Node.js-Express-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?style=for-the-badge&logo=vercel&logoColor=white)](https://backend-six-amber-19.vercel.app/)
 
-## 🚀 Features
+A full-stack, real-time campus cafeteria solution consisting of a cross-platform mobile pre-ordering app (Android & iOS) and an integrated Web Admin Management Dashboard.
 
-### User App (React Native)
-- **User Authentication**: Secure login/signup with JWT tokens
-- **Menu Browsing**: Browse food items by category (breakfast, lunch, snacks, beverages, dinner)
-- **Item Details**: View detailed information including price, description, and preparation time
-- **Cart Management**: Add items to cart, adjust quantities, and manage orders
-- **Order Placement**: Place orders with preferred pickup time and special instructions
-- **Order Tracking**: Track order status in real-time (pending → confirmed → preparing → ready → completed)
-- **Order History**: View past orders and current order status
-- **Profile Management**: User profile with order history and settings
+---
 
-### Admin Panel (Web)
-- **Dashboard**: Overview of daily orders, revenue, and menu statistics
-- **Menu Management**: Add, edit, and remove menu items
-- **Order Management**: View all orders, update order status, filter by status
-- **Authentication**: Secure admin login with role-based access
-- **Real-time Updates**: Live order status tracking
+## 🌐 Live Production Links
+
+- **Backend API**: [https://backend-six-amber-19.vercel.app/api](https://backend-six-amber-19.vercel.app/api)
+- **Web Admin Portal**: [https://backend-six-amber-19.vercel.app/admin/login.html](https://backend-six-amber-19.vercel.app/admin/login.html)
+- **API Health Check**: [https://backend-six-amber-19.vercel.app/health](https://backend-six-amber-19.vercel.app/health)
+
+---
+
+## ✨ Features
+
+### 📱 Mobile Customer App (React Native & Expo)
+- **Authentication**: JWT-based user login and registration with auto-login persistence via `AsyncStorage`.
+- **Category-Based Menu Browsing**: Live filtering across Breakfast, Lunch, Snacks, Beverages, and Dinner with preparation time indicators.
+- **Smart Pickup Time Scheduler**:
+  - 1-tap quick select chips: `⚡ 15 min`, `⏱ 30 min`, `🍴 45 min`, `🕒 1 hr`, and `✏️ Custom`.
+  - Natural time parser: Accepts flexible inputs (`"4 pm"`, `"4:30 PM"`, `"16:30"`, `"25 min"`), automatically converting them to valid ISO timestamps.
+  - Live pickup preview badge showing the exact scheduled time today.
+- **Bottom Navigation Bar**:
+  - 🍽️ **Menu**: Browse items, view details, and add to cart.
+  - 🛒 **Cart**: Real-time badge counter, quantity adjustments, and total bill calculation.
+  - 📋 **Orders**: Order history with live pastel status badges and pickup times.
+  - 👤 **Profile**: Customer details, quick navigation, admin portal access, and logout.
+- **Order Success Modal**: Full-screen receipt popup with order token `#ABC123`, pickup schedule, payment method, and instant `Track Live Order 🚀` button.
+- **Live Real-Time Synchronization**:
+  - Menu Screen: Polls silently every 8 seconds for new dishes and stock changes.
+  - Orders Screen: Auto-refreshes every 4 seconds to reflect kitchen progress instantly without screen flicker.
+  - Order Detail Screen: Live 3-second kitchen timeline updates (`Pending` → `Confirmed` → `Preparing` → `Ready` → `Completed`).
+- **🛡️ Embedded In-App Admin Portal**: Built-in WebView (`AdminScreen.js`) allowing cafeteria managers to manage orders and menu items directly within the app without opening an external browser.
+- **Custom Brand Identity**: Cohesive emerald theme (`#059669` / `#10B981`) with native Android adaptive launcher icons and official splash screens.
+
+### 🛡️ Web Admin Dashboard (Vercel & Express)
+- **Real-Time Metrics**: Daily gross revenue, active pending orders, preparation pipeline, and cancelled orders summary.
+- **Order Cancellation Revenue Adjustment**: Automatically subtracts cancelled orders from revenue metrics with instant live recalculation.
+- **Live Order Management**: Change order statuses in 1 click (`Confirmed`, `Preparing`, `Ready`, `Completed`, `Cancelled`) with confirmation alerts.
+- **Menu Management**: Add new items, update prices, toggle item availability, and edit descriptions.
+- **Mobile & Tablet Responsive**: Table containers with touch-friendly horizontal scrolling, adaptive stat grids, and optimized mobile layouts.
+- **Auto-Refresh**: Live data refreshes in the background every 30 seconds.
+
+---
 
 ## 📁 Project Structure
 
 ```
-canteen/
-├── backend/                  # Node.js Express API
-│   ├── admin/               # Admin panel (HTML/CSS/JS)
-│   │   ├── index.html       # Main admin dashboard
-│   │   └── login.html       # Admin login page
-│   ├── controllers/         # API controllers
-│   │   ├── authController.js
-│   │   ├── menuController.js
-│   │   └── orderController.js
-│   ├── middleware/          # Express middleware
-│   │   └── auth.js          # Authentication middleware
-│   ├── models/              # Mongoose models
-│   │   ├── User.js
-│   │   ├── MenuItem.js
-│   │   └── Order.js
-│   ├── routes/              # API routes
-│   │   ├── auth.js
-│   │   ├── menu.js
-│   │   └── orders.js
-│   ├── .env                 # Environment variables
+canteen-app/
+├── backend/                       # Node.js / Express Server
+│   ├── admin/                    # Admin Panel Frontend
+│   │   ├── index.html            # Admin dashboard
+│   │   ├── login.html            # Admin authentication
+│   │   └── logo.png              # Admin brand emblem
+│   ├── controllers/              # Business logic & request handling
+│   │   ├── authController.js     # User registration & JWT auth
+│   │   ├── menuController.js     # Menu CRUD & availability
+│   │   └── orderController.js    # Order processing & smart date parsing
+│   ├── middleware/               # Express middlewares
+│   │   └── auth.js               # JWT verification & admin guard
+│   ├── models/                   # Mongoose Schemas
+│   │   ├── User.js               # Customer & Staff accounts
+│   │   ├── MenuItem.js           # Dishes, prices, & categories
+│   │   └── Order.js              # Order items, status, & timestamps
+│   ├── routes/                   # API Route definitions
+│   │   ├── auth.js               # /api/auth
+│   │   ├── menu.js               # /api/menu
+│   │   └── orders.js             # /api/orders
 │   ├── package.json
-│   ├── seed.js              # Database seeding script
-│   └── server.js            # Express server
-├── mobile-app/              # React Native mobile app
+│   ├── seed.js                   # Database seed script
+│   └── server.js                 # Server entry point
+├── mobile-app/                   # React Native (Expo) Client
+│   ├── assets/                   # App icons & brand graphics
+│   │   ├── logo.png              # Primary brand logo
+│   │   ├── icon.png              # App launcher icon
+│   │   ├── android-icon-foreground.png # Adaptive icon
+│   │   ├── splash.png            # App splash screen
+│   │   └── favicon.png           # Browser favicon
 │   ├── src/
-│   │   ├── components/      # Reusable components
-│   │   ├── context/         # React Context providers
-│   │   │   ├── AuthContext.js
-│   │   │   └── CartContext.js
-│   │   ├── navigation/      # React Navigation setup
-│   │   │   └── AppNavigator.js
-│   │   ├── screens/         # App screens
-│   │   │   ├── LoginScreen.js
-│   │   │   ├── SignupScreen.js
-│   │   │   ├── MenuScreen.js
-│   │   │   ├── MenuItemDetailScreen.js
-│   │   │   ├── CartScreen.js
-│   │   │   ├── CheckoutScreen.js
-│   │   │   ├── OrdersScreen.js
-│   │   │   ├── OrderDetailScreen.js
-│   │   │   └── ProfileScreen.js
-│   │   └── services/        # API services
-│   │       └── api.js
-│   ├── App.js
-│   ├── package.json
-│   └── app.json
+│   │   ├── context/              # Global state providers
+│   │   │   ├── AuthContext.js    # Session & token storage
+│   │   │   └── CartContext.js    # Cart items & calculations
+│   │   ├── navigation/           # Navigation configuration
+│   │   │   └── AppNavigator.js   # Bottom Tabs & Stack Navigator
+│   │   ├── screens/              # UI Screen Views
+│   │   │   ├── LoginScreen.js    # Customer sign-in & Admin link
+│   │   │   ├── SignupScreen.js   # New customer registration
+│   │   │   ├── MenuScreen.js     # Category menu & live status
+│   │   │   ├── MenuItemDetailScreen.js # Item customization & add to cart
+│   │   │   ├── CartScreen.js     # Cart items review & checkout entry
+│   │   │   ├── CheckoutScreen.js # Pickup time chips, payment & success modal
+│   │   │   ├── OrdersScreen.js   # Active & historical orders
+│   │   │   ├── OrderDetailScreen.js # Real-time kitchen tracking & receipt
+│   │   │   ├── ProfileScreen.js  # Account info & In-App Admin portal entry
+│   │   │   └── AdminScreen.js    # Embedded In-App WebView for Admin Portal
+│   │   └── services/
+│   │       └── api.js            # Axios client with Vercel endpoints
+│   ├── App.js                    # Root component
+│   ├── app.json                  # Expo project & Android manifest config
+│   ├── eas.json                  # EAS Cloud Build profiles
+│   └── package.json
+├── BUILD_APK.md                  # Detailed APK compilation manual
 └── README.md
 ```
 
-## 🛠 Technology Stack
+---
 
-### Mobile App
-- **React Native**: Cross-platform mobile development
-- **Expo**: Development platform for React Native
-- **React Navigation**: Screen navigation
-- **Axios**: HTTP client for API requests
-- **AsyncStorage**: Local data persistence
-- **React Context**: State management
+## 🛠 Tech Stack & Libraries
 
-### Backend
-- **Node.js**: JavaScript runtime
-- **Express**: Web framework
-- **MongoDB**: NoSQL database
-- **Mongoose**: MongoDB object modeling
-- **JWT**: Authentication tokens
-- **bcryptjs**: Password hashing
-- **CORS**: Cross-origin resource sharing
+| Domain | Technology | Description |
+|---|---|---|
+| **Mobile Core** | React Native `0.86.3`, Expo SDK `57` | Cross-platform mobile development |
+| **Navigation** | `@react-navigation/native`, `@react-navigation/bottom-tabs`, `@react-navigation/stack` | Native stack and tab navigators |
+| **In-App Web** | `react-native-webview` | Embedded WebView for Admin Portal |
+| **Mobile State** | React Context API & `AsyncStorage` | Persistent local session & cart storage |
+| **HTTP Client** | `axios` | Robust HTTP client with Bearer interceptors & 60s timeout |
+| **Backend** | Node.js, Express | RESTful API server with static admin serving |
+| **Database** | MongoDB Atlas with Mongoose ODM | Cloud database with schema validation |
+| **Security** | `jsonwebtoken`, `bcryptjs`, CORS | Password hashing and role-based auth |
+| **Deployment** | Vercel (Backend), EAS Build (Mobile APK) | Cloud deployment & continuous compilation |
 
-### Admin Panel
-- **HTML/CSS/JavaScript**: Pure frontend technologies
-- **Fetch API**: HTTP requests
-- **LocalStorage**: Token storage
-
-## 📋 Prerequisites
-
-Before you begin, ensure you have the following installed:
-
-- **Node.js** (v14 or higher)
-- **npm** (comes with Node.js)
-- **MongoDB** (local installation or MongoDB Atlas)
-- **Expo CLI** (for mobile app development)
-- **React Native CLI** (optional, for native builds)
+---
 
 ## 🚀 Getting Started
 
-### 1. Clone the Repository
+### Prerequisites
+- [Node.js](https://nodejs.org/) (v18 or higher)
+- [npm](https://www.npmjs.com/)
+- [Expo CLI](https://docs.expo.dev/get-started/installation/) (`npm install -g eas-cli`)
 
+---
+
+### Local Development Setup
+
+#### 1. Clone the Repository
 ```bash
-git clone <repository-url>
-cd canteen
+git clone https://github.com/rajhackss/canteen-app.git
+cd canteen-app
 ```
 
-### 2. Backend Setup
-
-#### Install Dependencies
+#### 2. Backend Setup
 ```bash
 cd backend
 npm install
 ```
 
-#### Environment Configuration
-Create a `.env` file in the backend directory:
-
+Create a `.env` file inside `backend/`:
 ```env
 PORT=5000
-MONGODB_URI=mongodb://localhost:27017/canteen-app
-JWT_SECRET=your_jwt_secret_key_here
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret_key
 NODE_ENV=development
 ```
 
-#### Start MongoDB
-Make sure MongoDB is running on your system:
-
+Start the backend server:
 ```bash
-# For local MongoDB installation
-mongod
-
-# Or using MongoDB Atlas (update MONGODB_URI in .env)
-```
-
-#### Seed Database (Optional)
-Populate the database with sample data:
-
-```bash
-npm run seed
-```
-
-This creates:
-- Admin user: `admin@canteen.com` / `admin123`
-- Sample menu items across all categories
-
-#### Start Backend Server
-```bash
-npm start
-# For development with auto-reload
 npm run dev
+# Server starts at http://localhost:5000
+# Admin panel accessible at http://localhost:5000/admin/login.html
 ```
 
-The backend will run on `http://localhost:5000`
-
-#### Access Admin Panel
-Open your browser and navigate to:
-- Admin Login: `http://localhost:5000/admin`
-- Login with admin credentials: `admin@canteen.com` / `admin123`
-
-### 3. Mobile App Setup
-
-#### Install Dependencies
+#### 3. Mobile App Setup
 ```bash
-cd mobile-app
+cd ../mobile-app
 npm install
 ```
 
-#### Update API URL
-Edit `mobile-app/src/services/api.js` and update the API URL if your backend is running on a different port/IP:
-
-```javascript
-const API_URL = 'http://localhost:5000/api';
-```
-
-#### Run the App
+Start the Expo development server:
 ```bash
-# Start Expo development server
 npx expo start
+```
+- Press `a` to open on an Android emulator.
+- Scan the QR code using the **Expo Go** app on your physical Android or iOS device.
 
-# For Android
-npx expo start --android
+---
 
-# For iOS (macOS only)
-npx expo start --ios
+## 📦 Compiling Android APK
 
-# For web
-npx expo start --web
+The mobile app is configured for **EAS Cloud Build**, compiling standalone `.apk` packages without needing Android Studio installed locally.
+
+### Step 1: Install EAS CLI & Login
+```bash
+npm install -g eas-cli
+cd mobile-app
+eas login
 ```
 
-#### Install Expo App on Mobile
-1. Download the Expo Go app from App Store (iOS) or Google Play Store (Android)
-2. Scan the QR code displayed in the terminal
-3. The app will load in Expo Go
+### Step 2: Run Preview APK Build
+```bash
+eas build --platform android --profile preview
+```
 
-## 📡 API Endpoints
+### Step 3: Download & Install
+Once the build completes (typically 5–10 minutes), EAS provides a direct download link and QR code to install the `.apk` directly onto any Android device.
 
-### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - Login user
-- `GET /api/auth/me` - Get current user (protected)
+---
 
-### Menu
-- `GET /api/menu` - Get all menu items (public)
-- `GET /api/menu?category=lunch` - Get menu items by category
-- `GET /api/menu/:id` - Get single menu item
-- `POST /api/menu` - Create menu item (admin only)
-- `PUT /api/menu/:id` - Update menu item (admin only)
-- `DELETE /api/menu/:id` - Delete menu item (admin only)
+## 📡 API Reference
 
-### Orders
-- `POST /api/orders` - Create new order (protected)
-- `GET /api/orders/my-orders` - Get user's orders (protected)
-- `GET /api/orders/:id` - Get single order (protected)
-- `PATCH /api/orders/:id/cancel` - Cancel order (protected)
-- `GET /api/orders` - Get all orders (admin only)
-- `PATCH /api/orders/:id/status` - Update order status (admin only)
+### 🔐 Authentication (`/api/auth`)
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| `POST` | `/api/auth/register` | Public | Register new customer account |
+| `POST` | `/api/auth/login` | Public | Authenticate customer or admin & receive JWT |
+| `GET` | `/api/auth/me` | Authenticated | Retrieve current user profile |
 
-## 👥 Default Credentials
+### 🍔 Menu Management (`/api/menu`)
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| `GET` | `/api/menu` | Public | Fetch available menu items (supports `?category=...`) |
+| `GET` | `/api/menu/:id` | Public | Fetch single menu item details |
+| `POST` | `/api/menu` | Admin | Create a new dish item |
+| `PUT` | `/api/menu/:id` | Admin | Update dish details or toggle availability |
+| `DELETE` | `/api/menu/:id` | Admin | Remove dish from menu |
 
-### Admin User
-- **Email**: admin@canteen.com
-- **Password**: admin123
-- **Role**: Admin
+### 📋 Orders (`/api/orders`)
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| `POST` | `/api/orders` | Customer | Place order with smart pickup time parser |
+| `GET` | `/api/orders/my-orders` | Customer | Fetch current user's order history |
+| `GET` | `/api/orders/:id` | Customer/Admin | Fetch specific order receipt & tracking |
+| `PATCH` | `/api/orders/:id/cancel` | Customer | Cancel an active pending/confirmed order |
+| `GET` | `/api/orders` | Admin | Retrieve all canteen orders |
+| `PATCH` | `/api/orders/:id/status` | Admin | Advance order status (`preparing`, `ready`, etc.) |
 
-### Test User
-You can create test users through the mobile app signup or use the seed script to create additional users.
+---
 
-## 🎯 User Flow
+## 🛡️ Security & Performance Highlights
 
-### For Users
-1. **Register/Login**: Create account or login with existing credentials
-2. **Browse Menu**: View available food items by category
-3. **Add to Cart**: Select items and add to cart with desired quantities
-4. **Checkout**: Review cart, add pickup time and special instructions
-5. **Place Order**: Submit order and receive confirmation
-6. **Track Order**: Monitor order status in real-time
-7. **Pickup**: Collect order when status shows "Ready"
+- **AAPT2 Validated Assets**: All launcher and splash PNG images are verified with standard 8-byte PNG signatures (`89 50 4E 47 0D 0A 1A 0A`) to prevent Android resource compilation failures.
+- **Fail-Safe Date Parsing**: Pickup timestamps are parsed using multi-stage regex and ISO validation on both mobile and backend, guaranteeing zero unhandled Mongoose casting exceptions.
+- **Cold-Start Resilience**: Axios client incorporates a 60-second request window and graceful error messages for handling serverless wake-up latency.
+- **Protected Endpoints**: Admin operations are guarded by stacked JWT authorization and role-checking middlewares.
 
-### For Admins
-1. **Login**: Access admin panel with admin credentials
-2. **Dashboard**: View daily statistics and overview
-3. **Manage Menu**: Add, edit, or remove menu items
-4. **Process Orders**: View incoming orders and update status
-5. **Monitor**: Track order completion and revenue
-
-## 🔧 Configuration
-
-### Backend Environment Variables
-- `PORT`: Server port (default: 5000)
-- `MONGODB_URI`: MongoDB connection string
-- `JWT_SECRET`: Secret key for JWT token generation
-- `NODE_ENV`: Environment (development/production)
-
-### Mobile App Configuration
-- API URL in `src/services/api.js`
-- Navigation setup in `src/navigation/AppNavigator.js`
-- Context providers in `src/context/`
-
-## 🐛 Troubleshooting
-
-### Backend Issues
-- **MongoDB Connection Error**: Ensure MongoDB is running and MONGODB_URI is correct
-- **Port Already in Use**: Change PORT in .env file or kill process using the port
-- **CORS Errors**: Check CORS configuration in server.js
-
-### Mobile App Issues
-- **Network Request Failed**: Ensure backend is running and API URL is correct
-- **Metro Bundler Issues**: Clear cache: `npx expo start -c`
-- **iOS Build Issues**: Ensure Xcode is installed and properly configured
-- **Android Build Issues**: Ensure Android Studio and SDK are properly installed
-
-### Admin Panel Issues
-- **Login Failed**: Check admin credentials and backend API
-- **CORS Errors**: Ensure backend allows requests from admin panel origin
-- **Data Not Loading**: Check browser console for errors and API connectivity
-
-## 📱 Deployment
-
-### Backend Deployment
-1. Deploy to cloud platforms (Heroku, AWS, DigitalOcean)
-2. Set environment variables in deployment platform
-3. Use MongoDB Atlas for production database
-4. Configure CORS for production domain
-
-### Mobile App Deployment
-1. Build standalone app using EAS Build
-2. Submit to App Store (iOS) and Google Play (Android)
-3. Update API URL for production backend
-4. Configure app signing and certificates
-
-## 🔐 Security Considerations
-
-- Store sensitive data in environment variables
-- Use strong JWT secrets in production
-- Implement rate limiting for API endpoints
-- Add input validation and sanitization
-- Use HTTPS in production
-- Implement proper error handling
-- Add logging and monitoring
-
-## 🤝 Contributing
-
-Contributions are welcome! Please follow these steps:
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
+---
 
 ## 📄 License
 
-This project is licensed under the ISC License.
-
-## 👨‍💻 Development Team
-
-Smart Canteen Development Team
-
-## 📞 Support
-
-For support and questions, please contact the development team or create an issue in the repository.
+This project is licensed under the MIT License.
