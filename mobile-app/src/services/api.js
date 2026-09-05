@@ -3,20 +3,19 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // ============================================================================
 // ⚠️ API URL Configuration ⚠️
-// When compiling into an APK, ensure your live Render backend URL is set here:
-// Example: 'https://canteen-backend.onrender.com/api'
+// Live backend URL on Vercel:
 // ============================================================================
-const RENDER_BACKEND_URL = 'https://canteen-app-ltsi.onrender.com/api';
+const VERCEL_BACKEND_URL = 'https://backend-six-amber-19.vercel.app/api';
 
 // For local development on physical device on same WiFi:
 const LOCAL_BACKEND_URL = 'http://10.66.207.180:5000/api';
 
-// Set to true to connect to Render (REQUIRED for Standalone APK builds)
-const USE_RENDER = true;
+// Set to true to connect to Production Backend (REQUIRED for Standalone APK builds)
+const USE_PROD = true;
 
-export const API_URL = USE_RENDER ? RENDER_BACKEND_URL : LOCAL_BACKEND_URL;
-export const ADMIN_URL = USE_RENDER
-  ? 'https://canteen-app-ltsi.onrender.com/admin'
+export const API_URL = USE_PROD ? VERCEL_BACKEND_URL : LOCAL_BACKEND_URL;
+export const ADMIN_URL = USE_PROD
+  ? 'https://backend-six-amber-19.vercel.app/admin'
   : 'http://10.66.207.180:5000/admin';
 
 const api = axios.create({
