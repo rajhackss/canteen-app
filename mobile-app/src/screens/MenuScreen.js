@@ -43,7 +43,7 @@ const MenuScreen = ({ navigation }) => {
         return categoryMatch;
       }
       const maxBudget = parseFloat(selectedBudget);
-      const itemPrice = parseFloat(item.price);
+      const itemPrice = parseFloat(String(item.price).replace(/[^0-9.]/g, ''));
       const budgetMatch = !isNaN(itemPrice) && itemPrice <= maxBudget;
 
       return categoryMatch && budgetMatch;
@@ -205,16 +205,17 @@ const MenuScreen = ({ navigation }) => {
     );
   }
 
-  return (
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerRow}>
           <View style={styles.brandContainer}>
-            <Image
-              source={require('../../assets/logo.png')}
-              style={styles.headerLogo}
-              resizeMode="contain"
-            />
+            <View style={styles.logoWrapper}>
+              <Image
+                source={require('../../assets/logo.png')}
+                style={styles.headerLogo}
+                resizeMode="cover"
+              />
+            </View>
             <View>
               <Text style={styles.headerTitle}>Smart Canteen</Text>
               <Text style={styles.headerSubtitle}>Real-time live ordering</Text>
@@ -274,30 +275,33 @@ const MenuScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#FAFAFA',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#FAFAFA',
   },
   loadingText: {
-    marginTop: 10,
-    fontSize: 15,
-    fontWeight: '500',
-    color: '#64748B',
+    marginTop: 12,
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#3B82F6', // Blue secondary
   },
   header: {
-    backgroundColor: '#F59E0B',
-    paddingTop: 45,
-    paddingBottom: 16,
+    backgroundColor: '#FFB800', // Yellow primary
+    paddingTop: 50,
+    paddingBottom: 20,
     paddingHorizontal: 20,
-    elevation: 3,
-    shadowColor: '#D97706',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    elevation: 8,
+    shadowColor: '#FFB800',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    marginBottom: 10,
   },
   headerRow: {
     flexDirection: 'row',
@@ -308,125 +312,143 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  headerLogo: {
-    width: 38,
-    height: 38,
-    borderRadius: 8,
-    marginRight: 10,
+  logoWrapper: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
     backgroundColor: '#FFFFFF',
+    marginRight: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    overflow: 'hidden',
+  },
+  headerLogo: {
+    width: '100%',
+    height: '100%',
   },
   headerTitle: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: '#FFFFFF',
+    fontSize: 24,
+    fontWeight: '800',
+    color: '#111827', // Dark contrast on yellow
     letterSpacing: -0.5,
   },
   headerSubtitle: {
     fontSize: 13,
-    color: 'rgba(255, 255, 255, 0.9)',
+    fontWeight: '600',
+    color: '#374151',
     marginTop: 2,
   },
   liveBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.25)',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
+    backgroundColor: '#111827', // Dark contrast
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
   },
   liveDot: {
-    width: 7,
-    height: 7,
+    width: 8,
+    height: 8,
     borderRadius: 4,
-    backgroundColor: '#38BDF8',
-    marginRight: 5,
+    backgroundColor: '#EC4899', // Pink pulse
+    marginRight: 6,
   },
   liveText: {
     fontSize: 12,
     color: '#FFFFFF',
-    fontWeight: '600',
+    fontWeight: '700',
   },
   filterSection: {
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0',
-    paddingTop: 10,
-    paddingBottom: 8,
+    backgroundColor: 'transparent',
+    paddingVertical: 10,
   },
   categoryList: {
     paddingHorizontal: 16,
     paddingBottom: 8,
   },
   categoryButton: {
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 20,
-    marginRight: 8,
-    backgroundColor: '#F1F5F9',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
+    paddingHorizontal: 18,
+    paddingVertical: 8,
+    borderRadius: 24,
+    marginRight: 10,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1.5,
+    borderColor: '#E5E7EB',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
   },
   categoryButtonActive: {
-    backgroundColor: '#2563EB',
-    borderColor: '#2563EB',
+    backgroundColor: '#3B82F6', // Blue secondary
+    borderColor: '#3B82F6',
+    elevation: 4,
+    shadowColor: '#3B82F6',
+    shadowOpacity: 0.3,
   },
   categoryButtonText: {
-    fontSize: 13,
-    color: '#64748B',
-    fontWeight: '600',
+    fontSize: 14,
+    color: '#6B7280',
+    fontWeight: '700',
   },
   categoryButtonTextActive: {
     color: '#FFFFFF',
   },
   budgetRow: {
-    borderTopWidth: 1,
-    borderTopColor: '#F1F5F9',
     paddingTop: 8,
   },
   budgetList: {
     paddingHorizontal: 16,
   },
   budgetButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 5,
-    borderRadius: 16,
-    marginRight: 8,
-    backgroundColor: '#FFFBEB',
-    borderWidth: 1,
-    borderColor: '#FDE68A',
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 20,
+    marginRight: 10,
+    backgroundColor: '#FDF2F8', // Light pink
+    borderWidth: 1.5,
+    borderColor: '#FBCFE8',
   },
   budgetButtonActive: {
-    backgroundColor: '#F59E0B',
-    borderColor: '#D97706',
+    backgroundColor: '#EC4899', // Pink primary
+    borderColor: '#EC4899',
+    elevation: 3,
+    shadowColor: '#EC4899',
+    shadowOpacity: 0.3,
   },
   budgetButtonText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#92400E',
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#DB2777', // Darker pink text
   },
   budgetButtonTextActive: {
     color: '#FFFFFF',
-    fontWeight: '700',
   },
   menuList: {
     padding: 16,
+    paddingBottom: 40,
   },
   menuItem: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 14,
-    marginBottom: 14,
+    borderRadius: 20,
+    marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    elevation: 2,
+    borderColor: '#F3F4F6',
+    elevation: 4,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
   },
   menuItemSoldOut: {
-    backgroundColor: '#F8FAFC',
-    borderColor: '#E2E8F0',
-    opacity: 0.75,
+    backgroundColor: '#F9FAFB',
+    opacity: 0.6,
   },
   menuItemContent: {
     flexDirection: 'row',
@@ -440,142 +462,144 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 4,
+    marginBottom: 6,
     paddingRight: 6,
   },
   menuItemName: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#1E293B',
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#111827',
     flex: 1,
-    marginRight: 6,
+    marginRight: 8,
   },
   menuItemNameSoldOut: {
-    color: '#94A3B8',
+    color: '#6B7280',
     textDecorationLine: 'line-through',
   },
   soldOutBadge: {
-    backgroundColor: '#FEE2E2',
-    borderWidth: 1,
-    borderColor: '#FECACA',
+    backgroundColor: '#FEF2F2',
     paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 6,
+    paddingVertical: 4,
+    borderRadius: 8,
   },
   soldOutText: {
     fontSize: 11,
     fontWeight: '800',
-    color: '#DC2626',
+    color: '#EF4444',
   },
   liveStockBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#EFF6FF',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
   },
   greenDot: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#2563EB',
+    backgroundColor: '#3B82F6',
     marginRight: 4,
   },
   liveStockText: {
-    fontSize: 10,
-    fontWeight: '700',
+    fontSize: 11,
+    fontWeight: '800',
     color: '#1D4ED8',
   },
   menuItemDescription: {
-    fontSize: 13,
-    color: '#64748B',
-    lineHeight: 18,
-    marginBottom: 10,
+    fontSize: 14,
+    color: '#6B7280',
+    lineHeight: 20,
+    marginBottom: 12,
   },
   menuItemMeta: {
     flexDirection: 'row',
     alignItems: 'center',
     flexWrap: 'wrap',
-    gap: 8,
+    gap: 10,
   },
   menuItemPrice: {
-    fontSize: 17,
-    fontWeight: '700',
-    color: '#D97706',
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#FFB800', // Yellow primary
   },
   menuItemTime: {
-    fontSize: 11,
-    color: '#64748B',
-    backgroundColor: '#F1F5F9',
-    paddingHorizontal: 7,
-    paddingVertical: 3,
-    borderRadius: 6,
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#3B82F6', // Blue secondary
+    backgroundColor: '#EFF6FF',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
   },
   ratingBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FEF3C7',
-    paddingHorizontal: 6,
-    paddingVertical: 3,
-    borderRadius: 6,
+    backgroundColor: '#FDF2F8', // Light pink
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
   },
   ratingText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#B45309',
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#DB2777', // Dark pink
   },
   reviewsCount: {
-    fontSize: 10,
-    color: '#92400E',
-    marginLeft: 2,
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#BE185D',
+    marginLeft: 3,
   },
   addButton: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    backgroundColor: '#F43F5E',
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#EC4899', // Pink Primary
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 10,
-    elevation: 2,
-    shadowColor: '#F43F5E',
-    shadowOffset: { width: 0, height: 2 },
+    marginLeft: 12,
+    elevation: 4,
+    shadowColor: '#EC4899',
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
-    shadowRadius: 3,
+    shadowRadius: 6,
   },
   addButtonDisabled: {
-    backgroundColor: '#CBD5E1',
+    backgroundColor: '#E5E7EB',
     elevation: 0,
+    shadowOpacity: 0,
   },
   addButtonText: {
-    fontSize: 20,
+    fontSize: 24,
     color: '#FFFFFF',
-    fontWeight: 'bold',
+    fontWeight: '600',
     marginTop: -2,
   },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 60,
-    paddingHorizontal: 20,
+    paddingVertical: 80,
+    paddingHorizontal: 24,
   },
   emptyIcon: {
-    fontSize: 48,
-    marginBottom: 10,
+    fontSize: 56,
+    marginBottom: 16,
   },
   emptyText: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#475569',
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#374151',
     textAlign: 'center',
+    marginBottom: 8,
   },
   emptySub: {
-    fontSize: 13,
-    color: '#94A3B8',
-    marginTop: 4,
+    fontSize: 15,
+    color: '#6B7280',
     textAlign: 'center',
+    lineHeight: 22,
   },
 });
 

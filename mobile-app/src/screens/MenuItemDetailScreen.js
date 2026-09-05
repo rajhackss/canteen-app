@@ -25,6 +25,7 @@ const MenuItemDetailScreen = ({ route, navigation }) => {
   };
 
   const isSoldOut = item.isAvailable === false;
+  const itemPrice = parseFloat(String(item.price).replace(/[^0-9.]/g, '')) || 0;
 
   const addToCartHandler = () => {
     if (isSoldOut) {
@@ -72,9 +73,9 @@ const MenuItemDetailScreen = ({ route, navigation }) => {
           </View>
           
           <View style={styles.priceContainer}>
-            <Text style={styles.price}>₹{item.price}</Text>
+            <Text style={styles.price}>₹{itemPrice}</Text>
             <Text style={styles.prepTime}>
-              ⏱ {item.preparationTime || 10} minutes preparation
+              ⏱ {item.preparationTime || 10} min prep
             </Text>
           </View>
 
@@ -105,7 +106,7 @@ const MenuItemDetailScreen = ({ route, navigation }) => {
 
           <View style={styles.totalContainer}>
             <Text style={styles.totalLabel}>Total:</Text>
-            <Text style={styles.totalAmount}>₹{item.price * quantity}</Text>
+            <Text style={styles.totalAmount}>₹{itemPrice * quantity}</Text>
           </View>
         </View>
       </ScrollView>
@@ -128,157 +129,182 @@ const MenuItemDetailScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#FAFAFA',
   },
   content: {
     flex: 1,
   },
   imagePlaceholder: {
-    height: 180,
-    backgroundColor: '#FFFBEB',
+    height: 220,
+    backgroundColor: '#FFFBEB', // Light yellow
     justifyContent: 'center',
     alignItems: 'center',
     borderBottomWidth: 1,
     borderBottomColor: '#FDE68A',
   },
   imagePlaceholderText: {
-    fontSize: 64,
+    fontSize: 72,
   },
   details: {
-    padding: 20,
+    padding: 24,
+    backgroundColor: '#FAFAFA',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    marginTop: -20,
   },
   name: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#1E293B',
-    marginBottom: 6,
+    fontSize: 26,
+    fontWeight: '800',
+    color: '#111827',
+    marginBottom: 8,
     letterSpacing: -0.5,
+    flex: 1,
+    marginRight: 10,
   },
   category: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#2563EB',
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#3B82F6', // Blue secondary
     backgroundColor: '#EFF6FF',
     alignSelf: 'flex-start',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 6,
-    marginBottom: 16,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    marginBottom: 20,
     textTransform: 'capitalize',
   },
   priceContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 24,
   },
   price: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#D97706',
-    marginRight: 14,
+    fontSize: 32,
+    fontWeight: '800',
+    color: '#FFB800', // Yellow primary
+    marginRight: 16,
   },
   prepTime: {
-    fontSize: 13,
-    color: '#64748B',
-    backgroundColor: '#F1F5F9',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#3B82F6', // Blue secondary
+    backgroundColor: '#EFF6FF',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
   },
   section: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 14,
-    padding: 16,
+    borderRadius: 20,
+    padding: 20,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    marginBottom: 16,
+    borderColor: '#F3F4F6',
+    marginBottom: 20,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
   },
   sectionTitle: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#1E293B',
-    marginBottom: 8,
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#111827',
+    marginBottom: 10,
   },
   description: {
-    fontSize: 14,
-    color: '#64748B',
-    lineHeight: 22,
+    fontSize: 15,
+    color: '#6B7280',
+    lineHeight: 24,
   },
   quantityContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#FFFFFF',
-    borderRadius: 14,
-    padding: 14,
+    borderRadius: 20,
+    padding: 16,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    marginBottom: 16,
+    borderColor: '#F3F4F6',
+    marginBottom: 20,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
   },
   quantityButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 10,
+    width: 48,
+    height: 48,
+    borderRadius: 12,
     backgroundColor: '#EFF6FF',
-    borderWidth: 1,
-    borderColor: '#BFDBFE',
     justifyContent: 'center',
     alignItems: 'center',
   },
   quantityButtonText: {
-    fontSize: 22,
-    color: '#2563EB',
+    fontSize: 24,
+    color: '#3B82F6', // Blue secondary
     fontWeight: 'bold',
   },
   quantity: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: '#1E293B',
-    marginHorizontal: 28,
+    fontSize: 24,
+    fontWeight: '800',
+    color: '#111827',
+    marginHorizontal: 32,
   },
   totalContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    borderRadius: 14,
-    padding: 16,
+    borderRadius: 20,
+    padding: 20,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    marginBottom: 20,
+    borderColor: '#F3F4F6',
+    marginBottom: 24,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
   },
   totalLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#64748B',
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#6B7280',
   },
   totalAmount: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#D97706',
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#FFB800', // Yellow primary
   },
   footer: {
-    padding: 16,
-    paddingBottom: 24,
+    padding: 20,
+    paddingBottom: 28,
     borderTopWidth: 1,
-    borderTopColor: '#E2E8F0',
+    borderTopColor: '#F3F4F6',
     backgroundColor: '#FFFFFF',
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
   },
   addToCartButton: {
-    backgroundColor: '#F43F5E',
-    borderRadius: 10,
-    paddingVertical: 14,
+    backgroundColor: '#EC4899', // Pink primary
+    borderRadius: 16,
+    paddingVertical: 16,
     alignItems: 'center',
-    elevation: 2,
-    shadowColor: '#F43F5E',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
+    elevation: 4,
+    shadowColor: '#EC4899',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
   },
   addToCartButtonText: {
     color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '700',
+    fontSize: 18,
+    fontWeight: '800',
   },
 });
 
