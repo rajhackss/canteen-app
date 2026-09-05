@@ -12,8 +12,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Serve static files from admin directory
-app.use('/admin', express.static(path.join(__dirname, 'admin')));
+// Health check endpoint for Render & monitoring
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', uptime: process.uptime() });
+});
+
+// Redirect root to admin panel
+app.get('/', (req, res) => {
+  res.redirect('/admin');
+});
 
 // Database connection
 mongoose.connect(process.env.MONGODB_URI)
@@ -25,12 +32,15 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/menu', require('./routes/menu'));
 app.use('/api/orders', require('./routes/orders'));
 
-// Serve admin panel
-app.get('/admin', (req, res) => {
+// Serve static assets from admin directory without auto-serving index.html
+app.use('/admin', express.static(path.join(__dirname, 'admin'), { index: false }));
+
+// Serve admin panel pages explicitly
+app.get(['/admin', '/admin/', '/admin/login'], (req, res) => {
   res.sendFile(path.join(__dirname, 'admin', 'login.html'));
 });
 
-app.get('/admin/index.html', (req, res) => {
+app.get(['/admin/index.html', '/admin/dashboard'], (req, res) => {
   res.sendFile(path.join(__dirname, 'admin', 'index.html'));
 });
 

@@ -317,9 +317,9 @@
             <h1>🍽️ Smart Canteen Admin</h1>
             <div class="header-right">
                 <div class="nav">
-                    <button class="active" onclick="showSection('dashboard')">Dashboard</button>
-                    <button onclick="showSection('menu')">Menu</button>
-                    <button onclick="showSection('orders')">Orders</button>
+                    <button class="active" onclick="showSection('dashboard', this)">Dashboard</button>
+                    <button onclick="showSection('menu', this)">Menu</button>
+                    <button onclick="showSection('orders', this)">Orders</button>
                 </div>
                 <button class="btn btn-danger" onclick="logout()">Logout</button>
             </div>
@@ -480,29 +480,54 @@
     </div>
 
     <script>
-        const API_URL = 'http://localhost:5000/api';
+        // Dynamically resolve /api on HTTP/HTTPS to work on Render, localhost, or custom domain
+        const API_URL = window.location.protocol.startsWith('http') ? '/api' : 'http://localhost:5000/api';
         let authToken = localStorage.getItem('adminToken');
 
+        // Check authentication immediately
+        function checkAuth() {
+            if (!authToken) {
+                window.location.href = '/admin/login.html';
+                return false;
+            }
+            return true;
+        }
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('adminToken');
+            window.location.href = '/admin/login.html';
+        }
+
         // Show section
-        function showSection(section) {
+        function showSection(section, btnElement) {
             document.querySelectorAll('.nav button').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            if (btnElement) {
+                btnElement.classList.add('active');
+            } else {
+                const buttons = document.querySelectorAll('.nav button');
+                if (section === 'dashboard' && buttons[0]) buttons[0].classList.add('active');
+                if (section === 'menu' && buttons[1]) buttons[1].classList.add('active');
+                if (section === 'orders' && buttons[2]) buttons[2].classList.add('active');
+            }
 
             document.getElementById('dashboard-section').classList.add('hidden');
             document.getElementById('menu-section').classList.add('hidden');
             document.getElementById('orders-section').classList.add('hidden');
 
-            document.getElementById(`${section}-section`).classList.remove('hidden');
+            const targetSection = document.getElementById(`${section}-section`);
+            if (targetSection) targetSection.classList.remove('hidden');
 
             if (section === 'dashboard') loadDashboard();
             if (section === 'menu') loadMenu();
             if (section === 'orders') loadOrders();
         }
 
-        // API calls
+        // API calls with authorization and auto-redirect on session expiry
         async function apiCall(endpoint, options = {}) {
             const headers = {
                 'Content-Type': 'application/json',
+                ...(options.headers || {})
             };
 
             if (authToken) {
@@ -514,8 +539,16 @@
                 headers,
             });
 
+            if (response.status === 401 || response.status === 403) {
+                localStorage.removeItem('adminToken');
+                alert('Session expired or unauthorized. Redirecting to login.');
+                window.location.href = '/admin/login.html';
+                throw new Error('Unauthorized');
+            }
+
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                const errData = await response.json().catch(() => ({}));
+                throw new Error(errData.message || `HTTP error! status: ${response.status}`);
             }
 
             return response.json();
@@ -525,19 +558,19 @@
         async function loadDashboard() {
             try {
                 const orders = await apiCall('/orders');
-                const menu = await apiCall('/menu');
+                const menu = await apiCall('/menu?all=true');
 
                 const today = new Date().toDateString();
-                const todayOrders = orders.filter(order => 
-                    new Date(order.createdAt).toDateString() === today
+                const todayOrders = (orders || []).filter(order => 
+                    order.createdAt && new Date(order.createdAt).toDateString() === today
                 );
 
                 document.getElementById('total-orders').textContent = todayOrders.length;
                 document.getElementById('pending-orders').textContent = 
                     todayOrders.filter(o => o.status === 'pending').length;
                 document.getElementById('total-revenue').textContent = 
-                    '₹' + todayOrders.reduce((sum, o) => sum + o.totalAmount, 0);
-                document.getElementById('menu-items-count').textContent = menu.length;
+                    '₹' + todayOrders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+                document.getElementById('menu-items-count').textContent = (menu || []).length;
             } catch (error) {
                 console.error('Error loading dashboard:', error);
             }
@@ -549,10 +582,11 @@
                 document.getElementById('menu-loading').classList.remove('hidden');
                 document.getElementById('menu-error').classList.add('hidden');
 
-                const menuItems = await apiCall('/menu');
+                // Load all items including unavailable items for admin
+                const menuItems = await apiCall('/menu?all=true');
                 renderMenuTable(menuItems);
             } catch (error) {
-                document.getElementById('menu-error').textContent = 'Error loading menu items';
+                document.getElementById('menu-error').textContent = error.message || 'Error loading menu items';
                 document.getElementById('menu-error').classList.remove('hidden');
             } finally {
                 document.getElementById('menu-loading').classList.add('hidden');
@@ -561,13 +595,13 @@
 
         function renderMenuTable(menuItems) {
             const tbody = document.getElementById('menu-table-body');
-            tbody.innerHTML = menuItems.map(item => `
+            tbody.innerHTML = (menuItems || []).map(item => `
                 <tr>
-                    <td>${item.name}</td>
-                    <td>${item.category}</td>
-                    <td>₹${item.price}</td>
-                    <td>${item.preparationTime} min</td>
-                    <td>${item.available ? '✅' : '❌'}</td>
+                    <td>${item.name || ''}</td>
+                    <td>${item.category || ''}</td>
+                    <td>₹${item.price || 0}</td>
+                    <td>${item.preparationTime || 0} min</td>
+                    <td>${item.available ? '✅ Yes' : '❌ No'}</td>
                     <td class="actions">
                         <button class="btn btn-secondary" onclick="editMenuItem('${item._id}')">Edit</button>
                         <button class="btn btn-danger" onclick="deleteMenuItem('${item._id}')">Delete</button>
@@ -595,7 +629,7 @@
                 document.getElementById('menu-form').reset();
                 loadMenu();
             } catch (error) {
-                alert('Error adding menu item');
+                alert('Error adding menu item: ' + error.message);
             }
         });
 
@@ -613,7 +647,7 @@
 
                 document.getElementById('edit-modal').classList.add('active');
             } catch (error) {
-                alert('Error loading menu item');
+                alert('Error loading menu item: ' + error.message);
             }
         }
 
@@ -642,7 +676,7 @@
                 closeModal();
                 loadMenu();
             } catch (error) {
-                alert('Error updating menu item');
+                alert('Error updating menu item: ' + error.message);
             }
         });
 
@@ -653,7 +687,7 @@
                 await apiCall(`/menu/${id}`, { method: 'DELETE' });
                 loadMenu();
             } catch (error) {
-                alert('Error deleting menu item');
+                alert('Error deleting menu item: ' + error.message);
             }
         }
 
@@ -668,7 +702,7 @@
                 const orders = await apiCall(endpoint);
                 renderOrdersTable(orders);
             } catch (error) {
-                document.getElementById('orders-error').textContent = 'Error loading orders';
+                document.getElementById('orders-error').textContent = error.message || 'Error loading orders';
                 document.getElementById('orders-error').classList.remove('hidden');
             } finally {
                 document.getElementById('orders-loading').classList.add('hidden');
@@ -677,13 +711,13 @@
 
         function renderOrdersTable(orders) {
             const tbody = document.getElementById('orders-table-body');
-            tbody.innerHTML = orders.map(order => `
+            tbody.innerHTML = (orders || []).map(order => `
                 <tr>
-                    <td>#${order._id.slice(-6)}</td>
+                    <td>#${order._id ? order._id.slice(-6) : 'N/A'}</td>
                     <td>${order.user?.name || 'Unknown'}</td>
-                    <td>${order.items.map(i => `${i.menuItem.name} x${i.quantity}`).join(', ')}</td>
-                    <td>₹${order.totalAmount}</td>
-                    <td>${new Date(order.pickupTime).toLocaleString()}</td>
+                    <td>${(order.items || []).map(i => `${i.menuItem?.name || 'Item'} x${i.quantity}`).join(', ') || 'No items'}</td>
+                    <td>₹${order.totalAmount || 0}</td>
+                    <td>${order.pickupTime ? new Date(order.pickupTime).toLocaleString() : 'N/A'}</td>
                     <td><span class="status-badge status-${order.status}">${order.status}</span></td>
                     <td class="actions">
                         <select onchange="updateOrderStatus('${order._id}', this.value)" class="btn btn-secondary">
@@ -710,26 +744,14 @@
                 });
                 loadOrders();
             } catch (error) {
-                alert('Error updating order status');
+                alert('Error updating order status: ' + error.message);
             }
         }
 
-        // Logout
-        function logout() {
-            localStorage.removeItem('adminToken');
-            window.location.href = '/admin';
+        // Initialize only if authenticated
+        if (checkAuth()) {
+            loadDashboard();
         }
-
-        // Check authentication
-        function checkAuth() {
-            if (!authToken) {
-                window.location.href = '/admin';
-            }
-        }
-
-        // Initialize
-        checkAuth();
-        loadDashboard();
     </script>
 </body>
 </html>

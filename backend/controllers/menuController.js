@@ -3,8 +3,13 @@ const MenuItem = require('../models/MenuItem');
 // Get all menu items
 exports.getAllMenuItems = async (req, res) => {
   try {
-    const { category } = req.query;
-    const filter = category ? { category, available: true } : { available: true };
+    const { category, all } = req.query;
+    const filter = {};
+    if (category) filter.category = category;
+    // By default return only available items for public app, unless all=true is passed (e.g. for admin panel)
+    if (all !== 'true') {
+      filter.available = true;
+    }
     
     const menuItems = await MenuItem.find(filter).sort({ category: 1, name: 1 });
     res.json(menuItems);
