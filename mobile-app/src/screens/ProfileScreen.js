@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ScrollView,
   Alert,
+  Image,
 } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -98,7 +99,14 @@ const ProfileScreen = ({ navigation }) => {
           <Text style={styles.logoutButtonText}>Log Out</Text>
         </TouchableOpacity>
 
-        <Text style={styles.version}>Smart Canteen App • v1.0.0</Text>
+        <View style={styles.brandingFooter}>
+          <Image
+            source={require('../../assets/logo.png')}
+            style={styles.footerLogo}
+            resizeMode="contain"
+          />
+          <Text style={styles.version}>Smart Canteen App • v1.0.0</Text>
+        </View>
       </ScrollView>
     </View>
   );
@@ -271,11 +279,21 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '700',
   },
+  brandingFooter: {
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  footerLogo: {
+    width: 36,
+    height: 36,
+    borderRadius: 8,
+    marginBottom: 8,
+    opacity: 0.85,
+  },
   version: {
     textAlign: 'center',
     fontSize: 12,
     color: '#94A3B8',
-    marginBottom: 24,
   },
 });
 

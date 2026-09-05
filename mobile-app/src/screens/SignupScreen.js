@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Image,
 } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 
@@ -54,7 +55,11 @@ const SignupScreen = ({ navigation }) => {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.card}>
           <View style={styles.header}>
-            <Text style={styles.logoIcon}>📝</Text>
+            <Image
+              source={require('../../assets/logo.png')}
+              style={styles.logoImage}
+              resizeMode="contain"
+            />
             <Text style={styles.title}>Create Account</Text>
             <Text style={styles.subtitle}>Join Smart Canteen to order easily</Text>
           </View>
@@ -167,9 +172,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
   },
-  logoIcon: {
-    fontSize: 38,
-    marginBottom: 6,
+  logoImage: {
+    width: 64,
+    height: 64,
+    borderRadius: 14,
+    marginBottom: 10,
   },
   title: {
     fontSize: 24,

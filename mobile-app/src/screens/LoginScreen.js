@@ -10,6 +10,7 @@ import {
   Platform,
   ScrollView,
   Linking,
+  Image,
 } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 import { ADMIN_URL } from '../services/api';
@@ -45,7 +46,11 @@ const LoginScreen = ({ navigation }) => {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.card}>
           <View style={styles.header}>
-            <Text style={styles.logoIcon}>🍽️</Text>
+            <Image
+              source={require('../../assets/logo.png')}
+              style={styles.logoImage}
+              resizeMode="contain"
+            />
             <Text style={styles.title}>Smart Canteen</Text>
             <Text style={styles.subtitle}>Sign in to browse menu & pre-order</Text>
           </View>
@@ -142,9 +147,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 24,
   },
-  logoIcon: {
-    fontSize: 42,
-    marginBottom: 6,
+  logoImage: {
+    width: 72,
+    height: 72,
+    borderRadius: 16,
+    marginBottom: 12,
   },
   title: {
     fontSize: 26,

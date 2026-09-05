@@ -141,9 +141,16 @@ const MenuScreen = ({ navigation }) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerRow}>
-          <View>
-            <Text style={styles.headerTitle}>🍽️ Smart Canteen</Text>
-            <Text style={styles.headerSubtitle}>Order fresh meals & snacks</Text>
+          <View style={styles.brandContainer}>
+            <Image
+              source={require('../../assets/logo.png')}
+              style={styles.headerLogo}
+              resizeMode="contain"
+            />
+            <View>
+              <Text style={styles.headerTitle}>Smart Canteen</Text>
+              <Text style={styles.headerSubtitle}>Order fresh meals & snacks</Text>
+            </View>
           </View>
           <View style={styles.liveBadge}>
             <View style={styles.liveDot} />
@@ -213,6 +220,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  brandContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerLogo: {
+    width: 38,
+    height: 38,
+    borderRadius: 8,
+    marginRight: 10,
+    backgroundColor: '#FFFFFF',
   },
   headerTitle: {
     fontSize: 22,
