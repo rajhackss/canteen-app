@@ -205,6 +205,7 @@ const MenuScreen = ({ navigation }) => {
     );
   }
 
+  return (
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerRow}>
