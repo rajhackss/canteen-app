@@ -41,11 +41,8 @@ const SignupScreen = ({ navigation }) => {
     const result = await register(name, email, password, phone);
     setLoading(false);
 
-    if (result.success) {
-      Alert.alert('Success', 'Registration successful');
-      navigation.navigate('Login');
-    } else {
-      Alert.alert('Error', result.error);
+    if (!result.success) {
+      Alert.alert('Registration Failed', result.error || 'Unable to register. Please try again.');
     }
   };
 

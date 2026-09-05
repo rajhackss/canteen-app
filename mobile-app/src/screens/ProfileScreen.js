@@ -24,10 +24,6 @@ const ProfileScreen = ({ navigation }) => {
           text: 'Logout',
           onPress: () => {
             logout();
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'Login' }],
-            });
           },
         },
       ]

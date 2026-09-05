@@ -53,7 +53,15 @@ export const AuthProvider = ({ children }) => {
       
       return { success: true };
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Registration failed';
+      console.error('Registration error:', error);
+      let errorMessage = 'Registration failed';
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+        errorMessage = 'Backend is waking up from sleep. Please try again in 10 seconds.';
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
       setError(errorMessage);
       return { success: false, error: errorMessage };
     }
@@ -74,7 +82,15 @@ export const AuthProvider = ({ children }) => {
       
       return { success: true };
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Login failed';
+      console.error('Login error:', error);
+      let errorMessage = 'Login failed';
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+        errorMessage = 'Backend is waking up from sleep. Please try again in 10 seconds.';
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
       setError(errorMessage);
       return { success: false, error: errorMessage };
     }
