@@ -15,6 +15,9 @@ const LOCAL_BACKEND_URL = 'http://10.66.207.180:5000/api';
 const USE_RENDER = true;
 
 export const API_URL = USE_RENDER ? RENDER_BACKEND_URL : LOCAL_BACKEND_URL;
+export const ADMIN_URL = USE_RENDER
+  ? 'https://canteen-app-ltsi.onrender.com/admin'
+  : 'http://10.66.207.180:5000/admin';
 
 const api = axios.create({
   baseURL: API_URL,

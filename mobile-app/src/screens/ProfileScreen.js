@@ -6,9 +6,11 @@ import {
   StyleSheet,
   ScrollView,
   Alert,
+  Linking,
 } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { ADMIN_URL } from '../services/api';
 
 const ProfileScreen = ({ navigation }) => {
   const { user, logout } = useAuth();
@@ -41,6 +43,15 @@ const ProfileScreen = ({ navigation }) => {
       title: 'My Cart',
       onPress: () => navigation.navigate('Cart'),
       badge: getCartCount() > 0 ? getCartCount() : null,
+    },
+    {
+      icon: '🛡️',
+      title: 'Admin Portal',
+      onPress: () => {
+        Linking.openURL(ADMIN_URL).catch(() => {
+          Alert.alert('Error', 'Unable to open Admin Portal URL: ' + ADMIN_URL);
+        });
+      },
     },
     {
       icon: '⚙️',

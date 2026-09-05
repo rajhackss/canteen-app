@@ -9,8 +9,10 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Linking,
 } from 'react-native';
 import { useAuth } from '../context/AuthContext';
+import { ADMIN_URL } from '../services/api';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -84,6 +86,23 @@ const LoginScreen = ({ navigation }) => {
               Don't have an account? Sign up
             </Text>
           </TouchableOpacity>
+
+          <View style={styles.adminDivider}>
+            <View style={styles.dividerLine} />
+            <Text style={styles.dividerText}>CANTEEN STAFF</Text>
+            <View style={styles.dividerLine} />
+          </View>
+
+          <TouchableOpacity
+            style={styles.adminButton}
+            onPress={() => {
+              Linking.openURL(ADMIN_URL).catch(() => {
+                Alert.alert('Error', 'Unable to open Admin Portal URL: ' + ADMIN_URL);
+              });
+            }}
+          >
+            <Text style={styles.adminButtonText}>🛡️ Open Admin Portal</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -147,6 +166,39 @@ const styles = StyleSheet.create({
   linkText: {
     color: '#4CAF50',
     fontSize: 14,
+  },
+  adminDivider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 25,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#eee',
+  },
+  dividerText: {
+    marginHorizontal: 10,
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#999',
+    letterSpacing: 1,
+  },
+  adminButton: {
+    backgroundColor: '#37474F',
+    borderRadius: 8,
+    padding: 14,
+    alignItems: 'center',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  adminButtonText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: 'bold',
   },
 });
 
