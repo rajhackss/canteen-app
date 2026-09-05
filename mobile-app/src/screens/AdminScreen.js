@@ -48,7 +48,7 @@ const AdminScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="light-content" backgroundColor="#059669" />
+      <StatusBar barStyle="light-content" backgroundColor="#F59E0B" />
       
       {/* Top Header */}
       <View style={styles.header}>
@@ -74,7 +74,7 @@ const AdminScreen = ({ navigation }) => {
       {/* Loading Bar */}
       {loading && (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="small" color="#059669" />
+          <ActivityIndicator size="small" color="#F59E0B" />
           <Text style={styles.loadingText}>Loading Admin Portal...</Text>
         </View>
       )}
@@ -124,26 +124,26 @@ const AdminScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#059669',
+    backgroundColor: '#F59E0B',
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
   },
   header: {
-    backgroundColor: '#059669',
+    backgroundColor: '#F59E0B',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 12,
     elevation: 4,
-    shadowColor: '#000',
+    shadowColor: '#D97706',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
+    shadowOpacity: 0.2,
     shadowRadius: 4,
   },
   backButton: {
     paddingVertical: 6,
     paddingHorizontal: 10,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
     borderRadius: 8,
   },
   backButtonText: {
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   headerSubtitle: {
-    color: 'rgba(255, 255, 255, 0.85)',
+    color: 'rgba(255, 255, 255, 0.9)',
     fontSize: 11,
   },
   headerActions: {
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
   },
   iconButton: {
     padding: 6,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
     borderRadius: 8,
   },
   iconButtonText: {
@@ -180,13 +180,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#ECFDF5',
+    backgroundColor: '#FFFBEB',
     paddingVertical: 8,
     gap: 8,
   },
   loadingText: {
     fontSize: 12,
-    color: '#059669',
+    color: '#D97706',
     fontWeight: '600',
   },
   webView: {
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   retryButton: {
-    backgroundColor: '#059669',
+    backgroundColor: '#F43F5E',
     paddingVertical: 14,
     borderRadius: 10,
     alignItems: 'center',

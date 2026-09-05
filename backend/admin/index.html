@@ -10,17 +10,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #10b981;
-            --primary-dark: #059669;
-            --primary-light: #ecfdf5;
-            --secondary: #6366f1;
+            --primary: #f43f5e;
+            --primary-dark: #e11d48;
+            --primary-light: #fff1f2;
+            --accent: #f59e0b;
+            --accent-dark: #d97706;
+            --accent-light: #fef3c7;
+            --secondary: #2563eb;
+            --secondary-light: #eff6ff;
             --danger: #ef4444;
             --danger-light: #fef2f2;
             --warning: #f59e0b;
             --warning-light: #fffbeb;
             --info: #0284c7;
             --info-light: #f0f9ff;
-            --dark: #1e293b;
+            --dark: #0f172a;
             --gray: #64748b;
             --gray-light: #f1f5f9;
             --border: #e2e8f0;
@@ -58,12 +62,12 @@
 
         /* Top Header */
         .header {
-            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            background: linear-gradient(135deg, #d97706 0%, #f59e0b 35%, #ec4899 75%, #f43f5e 100%);
             color: white;
             padding: 16px 20px;
             border-radius: var(--radius-lg);
             margin-bottom: 20px;
-            box-shadow: var(--shadow);
+            box-shadow: 0 10px 20px -5px rgba(244, 63, 94, 0.3);
             display: flex;
             flex-direction: column;
             gap: 14px;
@@ -261,7 +265,7 @@
         }
 
         .stat-card.revenue-card::before {
-            background-color: #10b981;
+            background-color: #f59e0b;
         }
         .stat-card.pending-card::before {
             background-color: #f59e0b;
@@ -270,7 +274,7 @@
             background-color: #ef4444;
         }
         .stat-card.total-card::before {
-            background-color: #6366f1;
+            background-color: #2563eb;
         }
 
         .stat-card h3 {
@@ -291,7 +295,7 @@
         }
 
         .stat-card.revenue-card .value {
-            color: #059669;
+            color: #d97706;
         }
 
         .stat-card.pending-card .value {
@@ -511,9 +515,9 @@
         }
 
         .status-ready {
-            background-color: #f0fdf4;
-            color: #15803d;
-            border: 1px solid #bbf7d0;
+            background-color: #fff1f2;
+            color: #e11d48;
+            border: 1px solid #fecdd3;
         }
 
         .status-completed {
@@ -562,12 +566,13 @@
 
         .counter-tag {
             display: inline-block;
-            background: #f1f5f9;
-            color: #475569;
+            background: #eff6ff;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
             padding: 2px 6px;
             border-radius: 4px;
             font-size: 11px;
-            font-weight: 500;
+            font-weight: 600;
             margin-top: 4px;
         }
 
@@ -595,13 +600,13 @@
         }
 
         .stock-active {
-            background-color: #ecfdf5;
-            color: #059669;
-            border: 1px solid #a7f3d0;
+            background-color: #eff6ff;
+            color: #2563eb;
+            border: 1px solid #bfdbfe;
         }
 
         .stock-active:hover {
-            background-color: #d1fae5;
+            background-color: #dbeafe;
         }
 
         .stock-sold-out {
@@ -1078,7 +1083,7 @@
                 <p style="color: var(--gray); font-size: 13px; margin-top: 4px; margin-bottom: 18px;">
                     Configure the UPI Payment details and QR Code presented to students in the mobile app.
                 </p>
-                <div id="settings-message" class="hidden" style="padding: 10px 14px; background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; border-radius: 8px; margin-bottom: 16px; font-size: 14px;"></div>
+                <div id="settings-message" class="hidden" style="padding: 10px 14px; background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; border-radius: 8px; margin-bottom: 16px; font-size: 14px;"></div>
                 <form id="settings-form">
                     <div class="form-grid">
                         <div class="form-group">
@@ -1464,7 +1469,7 @@
                         ${item.description ? `<div style="font-size: 12px; color: var(--gray);">${item.description}</div>` : ''}
                     </td>
                     <td><span style="text-transform: capitalize; background: var(--gray-light); padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: 500;">${item.category || ''}</span></td>
-                    <td><strong style="color: #059669; font-size: 15px;">₹${item.price || 0}</strong></td>
+                    <td><strong style="color: #d97706; font-size: 15px;">₹${item.price || 0}</strong></td>
                     <td>${item.preparationTime || 0} mins</td>
                     <td>
                         <button 
@@ -1601,7 +1606,7 @@
                             <td><span style="text-transform:capitalize; background:var(--gray-light); padding:2px 8px; border-radius:4px; font-size:11px;">${dish.category || 'General'}</span></td>
                             <td>₹${dish.price || 0}</td>
                             <td><strong>${item.totalOrdered} orders</strong></td>
-                            <td><strong style="color:#059669;">₹${(item.totalRevenue || 0).toLocaleString('en-IN')}</strong></td>
+                            <td><strong style="color:#d97706;">₹${(item.totalRevenue || 0).toLocaleString('en-IN')}</strong></td>
                         </tr>
                     `;
                 }).join('');

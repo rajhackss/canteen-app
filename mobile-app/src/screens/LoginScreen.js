@@ -181,19 +181,19 @@ const styles = StyleSheet.create({
     color: '#1E293B',
   },
   button: {
-    backgroundColor: '#059669',
+    backgroundColor: '#F43F5E',
     borderRadius: 10,
     paddingVertical: 14,
     alignItems: 'center',
     marginTop: 4,
     elevation: 2,
-    shadowColor: '#059669',
+    shadowColor: '#F43F5E',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
   },
   buttonDisabled: {
-    backgroundColor: '#A7F3D0',
+    backgroundColor: '#FDA4AF',
   },
   buttonText: {
     color: '#FFFFFF',
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   linkTextBold: {
-    color: '#059669',
+    color: '#2563EB',
     fontWeight: '700',
   },
   adminDivider: {
@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.8,
   },
   adminButton: {
-    backgroundColor: '#1E293B',
+    backgroundColor: '#2563EB',
     borderRadius: 10,
     paddingVertical: 13,
     alignItems: 'center',

@@ -51,8 +51,8 @@ const MenuItemDetailScreen = ({ route, navigation }) => {
                 <Text style={{ color: '#DC2626', fontWeight: '800', fontSize: 12 }}>🚫 SOLD OUT</Text>
               </View>
             ) : (
-              <View style={{ backgroundColor: '#ECFDF5', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6 }}>
-                <Text style={{ color: '#059669', fontWeight: '800', fontSize: 12 }}>🟢 IN STOCK</Text>
+              <View style={{ backgroundColor: '#EFF6FF', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6 }}>
+                <Text style={{ color: '#2563EB', fontWeight: '800', fontSize: 12 }}>🟢 IN STOCK</Text>
               </View>
             )}
           </View>
@@ -135,11 +135,11 @@ const styles = StyleSheet.create({
   },
   imagePlaceholder: {
     height: 180,
-    backgroundColor: '#ECFDF5',
+    backgroundColor: '#FFFBEB',
     justifyContent: 'center',
     alignItems: 'center',
     borderBottomWidth: 1,
-    borderBottomColor: '#A7F3D0',
+    borderBottomColor: '#FDE68A',
   },
   imagePlaceholderText: {
     fontSize: 64,
@@ -157,8 +157,8 @@ const styles = StyleSheet.create({
   category: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#059669',
-    backgroundColor: '#ECFDF5',
+    color: '#2563EB',
+    backgroundColor: '#EFF6FF',
     alignSelf: 'flex-start',
     paddingHorizontal: 10,
     paddingVertical: 4,
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 28,
     fontWeight: '700',
-    color: '#059669',
+    color: '#D97706',
     marginRight: 14,
   },
   prepTime: {
@@ -219,15 +219,15 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 10,
-    backgroundColor: '#F1F5F9',
+    backgroundColor: '#EFF6FF',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#BFDBFE',
     justifyContent: 'center',
     alignItems: 'center',
   },
   quantityButtonText: {
     fontSize: 22,
-    color: '#1E293B',
+    color: '#2563EB',
     fontWeight: 'bold',
   },
   quantity: {
@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
   totalAmount: {
     fontSize: 24,
     fontWeight: '700',
-    color: '#059669',
+    color: '#D97706',
   },
   footer: {
     padding: 16,
@@ -265,12 +265,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   addToCartButton: {
-    backgroundColor: '#10B981',
+    backgroundColor: '#F43F5E',
     borderRadius: 10,
     paddingVertical: 14,
     alignItems: 'center',
     elevation: 2,
-    shadowColor: '#10B981',
+    shadowColor: '#F43F5E',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,

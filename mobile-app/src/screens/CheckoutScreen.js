@@ -587,8 +587,8 @@ const styles = StyleSheet.create({
     borderColor: '#E2E8F0',
   },
   chipSelected: {
-    backgroundColor: '#ECFDF5',
-    borderColor: '#10B981',
+    backgroundColor: '#EFF6FF',
+    borderColor: '#2563EB',
   },
   chipText: {
     fontSize: 13,
@@ -596,7 +596,7 @@ const styles = StyleSheet.create({
     color: '#475569',
   },
   chipTextSelected: {
-    color: '#059669',
+    color: '#2563EB',
     fontWeight: '700',
   },
   customInputContainer: {
@@ -605,9 +605,9 @@ const styles = StyleSheet.create({
   pickupPreviewBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#ECFDF5',
+    backgroundColor: '#EFF6FF',
     borderWidth: 1,
-    borderColor: '#A7F3D0',
+    borderColor: '#BFDBFE',
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 8,
@@ -619,11 +619,11 @@ const styles = StyleSheet.create({
   },
   pickupPreviewText: {
     fontSize: 13,
-    color: '#065F46',
+    color: '#1E40AF',
   },
   pickupPreviewBold: {
     fontWeight: '700',
-    color: '#047857',
+    color: '#1D4ED8',
   },
   orderItem: {
     flexDirection: 'row',
@@ -647,7 +647,7 @@ const styles = StyleSheet.create({
   itemPrice: {
     fontSize: 15,
     fontWeight: '700',
-    color: '#059669',
+    color: '#D97706',
   },
   totalRow: {
     flexDirection: 'row',
@@ -656,7 +656,7 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     marginTop: 4,
     borderTopWidth: 1.5,
-    borderTopColor: '#059669',
+    borderTopColor: '#D97706',
   },
   totalLabel: {
     fontSize: 16,
@@ -666,7 +666,7 @@ const styles = StyleSheet.create({
   totalAmount: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#059669',
+    color: '#D97706',
   },
   inputLabel: {
     fontSize: 13,
@@ -703,8 +703,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8FAFC',
   },
   paymentOptionSelected: {
-    backgroundColor: '#ECFDF5',
-    borderColor: '#10B981',
+    backgroundColor: '#EFF6FF',
+    borderColor: '#2563EB',
   },
   paymentOptionText: {
     fontSize: 15,
@@ -712,7 +712,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   paymentOptionTextSelected: {
-    color: '#059669',
+    color: '#2563EB',
     fontWeight: '700',
   },
   paymentOptionSub: {
@@ -730,13 +730,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   radioCircleSelected: {
-    borderColor: '#10B981',
+    borderColor: '#2563EB',
   },
   radioDot: {
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: '#10B981',
+    backgroundColor: '#2563EB',
   },
   addressText: {
     fontSize: 14,
@@ -756,18 +756,18 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
   },
   placeOrderButton: {
-    backgroundColor: '#10B981',
+    backgroundColor: '#F43F5E',
     borderRadius: 10,
     paddingVertical: 14,
     alignItems: 'center',
     elevation: 2,
-    shadowColor: '#10B981',
+    shadowColor: '#F43F5E',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
   },
   buttonDisabled: {
-    backgroundColor: '#A7F3D0',
+    backgroundColor: '#FDA4AF',
   },
   placeOrderButtonText: {
     color: '#FFFFFF',
@@ -800,7 +800,7 @@ const styles = StyleSheet.create({
     width: 76,
     height: 76,
     borderRadius: 38,
-    backgroundColor: '#ECFDF5',
+    backgroundColor: '#FFE4E6',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 16,
@@ -809,11 +809,11 @@ const styles = StyleSheet.create({
     width: 54,
     height: 54,
     borderRadius: 27,
-    backgroundColor: '#10B981',
+    backgroundColor: '#F43F5E',
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 4,
-    shadowColor: '#10B981',
+    shadowColor: '#F43F5E',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.35,
     shadowRadius: 6,
@@ -867,8 +867,8 @@ const styles = StyleSheet.create({
     fontFamily: 'monospace',
     fontWeight: '800',
     fontSize: 15,
-    color: '#059669',
-    backgroundColor: '#ECFDF5',
+    color: '#2563EB',
+    backgroundColor: '#EFF6FF',
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 6,
@@ -886,17 +886,17 @@ const styles = StyleSheet.create({
   receiptAmount: {
     fontSize: 16,
     fontWeight: '800',
-    color: '#059669',
+    color: '#D97706',
   },
   trackButton: {
-    backgroundColor: '#059669',
+    backgroundColor: '#F43F5E',
     width: '100%',
     paddingVertical: 14,
     borderRadius: 12,
     alignItems: 'center',
     marginBottom: 10,
     elevation: 2,
-    shadowColor: '#059669',
+    shadowColor: '#F43F5E',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
@@ -1014,8 +1014,8 @@ const styles = StyleSheet.create({
   upiBadge: {
     fontSize: 11,
     fontWeight: '800',
-    color: '#059669',
-    backgroundColor: '#ECFDF5',
+    color: '#2563EB',
+    backgroundColor: '#EFF6FF',
     paddingHorizontal: 10,
     paddingVertical: 3,
     borderRadius: 6,
@@ -1070,20 +1070,20 @@ const styles = StyleSheet.create({
     fontFamily: 'monospace',
   },
   copyButton: {
-    backgroundColor: '#ECFDF5',
+    backgroundColor: '#EFF6FF',
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: '#A7F3D0',
+    borderColor: '#BFDBFE',
   },
   copyButtonText: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#059669',
+    color: '#2563EB',
   },
   payUpiAppButton: {
-    backgroundColor: '#059669',
+    backgroundColor: '#2563EB',
     width: '100%',
     paddingVertical: 12,
     borderRadius: 10,

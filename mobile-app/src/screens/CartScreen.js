@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   browseButton: {
-    backgroundColor: '#059669',
+    backgroundColor: '#F43F5E',
     paddingHorizontal: 26,
     paddingVertical: 12,
     borderRadius: 8,
@@ -142,14 +142,14 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   header: {
-    backgroundColor: '#059669',
+    backgroundColor: '#F59E0B',
     paddingTop: 45,
     paddingBottom: 16,
     paddingHorizontal: 20,
     elevation: 3,
-    shadowColor: '#000',
+    shadowColor: '#D97706',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.15,
     shadowRadius: 4,
   },
   headerTitle: {
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
   },
   headerSubtitle: {
     fontSize: 13,
-    color: 'rgba(255, 255, 255, 0.85)',
+    color: 'rgba(255, 255, 255, 0.9)',
     marginTop: 2,
   },
   cartList: {
@@ -201,15 +201,15 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 8,
-    backgroundColor: '#F1F5F9',
+    backgroundColor: '#EFF6FF',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#BFDBFE',
   },
   quantityButtonText: {
     fontSize: 18,
-    color: '#1E293B',
+    color: '#2563EB',
     fontWeight: 'bold',
   },
   quantity: {
@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
   cartItemTotalText: {
     fontSize: 17,
     fontWeight: '700',
-    color: '#059669',
+    color: '#D97706',
   },
   removeButton: {
     padding: 6,
@@ -265,15 +265,15 @@ const styles = StyleSheet.create({
   totalAmount: {
     fontSize: 26,
     fontWeight: '700',
-    color: '#059669',
+    color: '#D97706',
   },
   checkoutButton: {
-    backgroundColor: '#10B981',
+    backgroundColor: '#F43F5E',
     borderRadius: 10,
-    padding: 14,
+    paddingVertical: 14,
     alignItems: 'center',
     elevation: 2,
-    shadowColor: '#10B981',
+    shadowColor: '#F43F5E',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,

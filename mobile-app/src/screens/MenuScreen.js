@@ -201,7 +201,7 @@ const MenuScreen = ({ navigation }) => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#059669" />
+        <ActivityIndicator size="large" color="#F43F5E" />
         <Text style={styles.loadingText}>Loading live menu...</Text>
       </View>
     );
@@ -259,7 +259,7 @@ const MenuScreen = ({ navigation }) => {
         keyExtractor={(item) => item._id}
         contentContainerStyle={styles.menuList}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#059669']} />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#F43F5E', '#F59E0B', '#2563EB']} />
         }
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
@@ -291,14 +291,14 @@ const styles = StyleSheet.create({
     color: '#64748B',
   },
   header: {
-    backgroundColor: '#059669',
+    backgroundColor: '#F59E0B',
     paddingTop: 45,
     paddingBottom: 16,
     paddingHorizontal: 20,
     elevation: 3,
-    shadowColor: '#000',
+    shadowColor: '#D97706',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.15,
     shadowRadius: 4,
   },
   headerRow: {
@@ -325,13 +325,13 @@ const styles = StyleSheet.create({
   },
   headerSubtitle: {
     fontSize: 13,
-    color: 'rgba(255, 255, 255, 0.85)',
+    color: 'rgba(255, 255, 255, 0.9)',
     marginTop: 2,
   },
   liveBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
@@ -340,7 +340,7 @@ const styles = StyleSheet.create({
     width: 7,
     height: 7,
     borderRadius: 4,
-    backgroundColor: '#4ADE80',
+    backgroundColor: '#38BDF8',
     marginRight: 5,
   },
   liveText: {
@@ -369,8 +369,8 @@ const styles = StyleSheet.create({
     borderColor: '#E2E8F0',
   },
   categoryButtonActive: {
-    backgroundColor: '#059669',
-    borderColor: '#059669',
+    backgroundColor: '#2563EB',
+    borderColor: '#2563EB',
   },
   categoryButtonText: {
     fontSize: 13,
@@ -393,21 +393,21 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     borderRadius: 16,
     marginRight: 8,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#FFFBEB',
     borderWidth: 1,
-    borderColor: '#CBD5E1',
+    borderColor: '#FDE68A',
   },
   budgetButtonActive: {
-    backgroundColor: '#ECFDF5',
-    borderColor: '#10B981',
+    backgroundColor: '#F59E0B',
+    borderColor: '#D97706',
   },
   budgetButtonText: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#64748B',
+    color: '#92400E',
   },
   budgetButtonTextActive: {
-    color: '#059669',
+    color: '#FFFFFF',
     fontWeight: '700',
   },
   menuList: {
@@ -472,7 +472,7 @@ const styles = StyleSheet.create({
   liveStockBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#ECFDF5',
+    backgroundColor: '#EFF6FF',
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 6,
@@ -481,13 +481,13 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#10B981',
+    backgroundColor: '#2563EB',
     marginRight: 4,
   },
   liveStockText: {
     fontSize: 10,
     fontWeight: '700',
-    color: '#059669',
+    color: '#1D4ED8',
   },
   menuItemDescription: {
     fontSize: 13,
@@ -504,7 +504,7 @@ const styles = StyleSheet.create({
   menuItemPrice: {
     fontSize: 17,
     fontWeight: '700',
-    color: '#059669',
+    color: '#D97706',
   },
   menuItemTime: {
     fontSize: 11,
@@ -536,12 +536,12 @@ const styles = StyleSheet.create({
     width: 38,
     height: 38,
     borderRadius: 19,
-    backgroundColor: '#10B981',
+    backgroundColor: '#F43F5E',
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 10,
     elevation: 2,
-    shadowColor: '#10B981',
+    shadowColor: '#F43F5E',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 3,

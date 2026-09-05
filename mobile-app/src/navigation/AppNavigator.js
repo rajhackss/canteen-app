@@ -28,7 +28,7 @@ const MainTabs = () => {
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarActiveTintColor: '#059669',
+        tabBarActiveTintColor: '#F43F5E',
         tabBarInactiveTintColor: '#64748B',
         tabBarStyle: {
           backgroundColor: '#FFFFFF',
@@ -48,7 +48,7 @@ const MainTabs = () => {
           fontWeight: '600',
         },
         tabBarBadgeStyle: {
-          backgroundColor: '#10B981',
+          backgroundColor: '#F43F5E',
           color: '#FFFFFF',
           fontSize: 11,
           fontWeight: 'bold',
@@ -106,7 +106,7 @@ const AppNavigator = () => {
         screenOptions={{
           headerShown: false,
           headerStyle: {
-            backgroundColor: '#059669',
+            backgroundColor: '#F59E0B',
             elevation: 0,
             shadowOpacity: 0,
           },

@@ -105,7 +105,7 @@ const OrderDetailScreen = ({ route, navigation }) => {
       case 'preparing':
         return { bg: '#FAF5FF', text: '#7E22CE', border: '#E9D5FF' };
       case 'ready':
-        return { bg: '#ECFDF5', text: '#047857', border: '#6EE7B7' };
+        return { bg: '#FFF1F2', text: '#E11D48', border: '#FECDD3' };
       case 'completed':
         return { bg: '#F0FDF4', text: '#166534', border: '#86EFAC' };
       case 'cancelled':
@@ -132,7 +132,7 @@ const OrderDetailScreen = ({ route, navigation }) => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#059669" />
+        <ActivityIndicator size="large" color="#F59E0B" />
         <Text style={styles.loadingText}>Loading order details...</Text>
       </View>
     );
@@ -180,7 +180,7 @@ const OrderDetailScreen = ({ route, navigation }) => {
             </View>
             <View style={styles.readyAlertCallout}>
               <Text style={styles.readyAlertCalloutText}>
-                👉 Collect from <Text style={{ fontWeight: '800', color: '#047857' }}>{order.pickupCounter || 'Counter 1'}</Text> with Token <Text style={{ fontWeight: '800', color: '#047857' }}>#{order._id.slice(-6).toUpperCase()}</Text>
+                👉 Collect from <Text style={{ fontWeight: '800', color: '#2563EB' }}>{order.pickupCounter || 'Counter 1'}</Text> with Token <Text style={{ fontWeight: '800', color: '#2563EB' }}>#{order._id.slice(-6).toUpperCase()}</Text>
               </Text>
             </View>
           </View>
@@ -460,14 +460,14 @@ const styles = StyleSheet.create({
     color: '#EF4444',
   },
   header: {
-    backgroundColor: '#059669',
+    backgroundColor: '#F59E0B',
     paddingTop: 45,
     paddingBottom: 16,
     paddingHorizontal: 20,
     elevation: 3,
-    shadowColor: '#000',
+    shadowColor: '#D97706',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.2,
     shadowRadius: 4,
   },
   headerRow: {
@@ -483,13 +483,13 @@ const styles = StyleSheet.create({
   },
   headerSubtitle: {
     fontSize: 13,
-    color: 'rgba(255, 255, 255, 0.85)',
+    color: 'rgba(255, 255, 255, 0.9)',
     marginTop: 2,
   },
   liveBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
@@ -498,13 +498,13 @@ const styles = StyleSheet.create({
     width: 7,
     height: 7,
     borderRadius: 4,
-    backgroundColor: '#4ADE80',
+    backgroundColor: '#38BDF8',
     marginRight: 5,
   },
   liveText: {
     fontSize: 11,
     color: '#FFFFFF',
-    fontWeight: '600',
+    fontWeight: '700',
   },
   content: {
     flex: 1,
@@ -595,7 +595,7 @@ const styles = StyleSheet.create({
   itemTotal: {
     fontSize: 15,
     fontWeight: '700',
-    color: '#059669',
+    color: '#D97706',
   },
   instructions: {
     fontSize: 13,
@@ -618,7 +618,7 @@ const styles = StyleSheet.create({
   },
   finalTotal: {
     borderTopWidth: 1.5,
-    borderTopColor: '#059669',
+    borderTopColor: '#F59E0B',
     paddingTop: 10,
     marginTop: 6,
   },
@@ -630,7 +630,7 @@ const styles = StyleSheet.create({
   finalTotalValue: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#059669',
+    color: '#D97706',
   },
   cancelButton: {
     backgroundColor: '#EF4444',
@@ -647,16 +647,16 @@ const styles = StyleSheet.create({
   },
   /* 🔔 Ready Alert Banner Styles */
   readyAlertBanner: {
-    backgroundColor: '#ECFDF5',
+    backgroundColor: '#FFF1F2',
     borderWidth: 2,
-    borderColor: '#10B981',
+    borderColor: '#F43F5E',
     borderRadius: 14,
     padding: 16,
     marginBottom: 14,
     elevation: 4,
-    shadowColor: '#10B981',
+    shadowColor: '#F43F5E',
     shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.25,
     shadowRadius: 5,
   },
   readyAlertHeader: {
@@ -671,12 +671,12 @@ const styles = StyleSheet.create({
   readyAlertTitle: {
     fontSize: 16,
     fontWeight: '900',
-    color: '#065F46',
+    color: '#BE123C',
     letterSpacing: -0.3,
   },
   readyAlertDesc: {
     fontSize: 13,
-    color: '#047857',
+    color: '#9F1239',
     marginTop: 2,
   },
   readyAlertCallout: {
@@ -684,7 +684,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 10,
     borderLeftWidth: 4,
-    borderLeftColor: '#10B981',
+    borderLeftColor: '#F43F5E',
   },
   readyAlertCalloutText: {
     fontSize: 13,
@@ -831,7 +831,7 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   openRateButton: {
-    backgroundColor: '#059669',
+    backgroundColor: '#F43F5E',
     paddingVertical: 10,
     paddingHorizontal: 18,
     borderRadius: 8,
@@ -923,7 +923,7 @@ const styles = StyleSheet.create({
   },
   modalSubmitButton: {
     flex: 2,
-    backgroundColor: '#059669',
+    backgroundColor: '#F43F5E',
     paddingVertical: 12,
     borderRadius: 10,
     alignItems: 'center',

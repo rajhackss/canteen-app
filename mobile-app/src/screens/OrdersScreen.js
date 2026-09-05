@@ -165,7 +165,7 @@ const OrdersScreen = ({ navigation }) => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#059669" />
+        <ActivityIndicator size="large" color="#F59E0B" />
         <Text style={styles.loadingText}>Loading orders...</Text>
       </View>
     );
@@ -213,7 +213,7 @@ const OrdersScreen = ({ navigation }) => {
         keyExtractor={(item) => item._id}
         contentContainerStyle={styles.ordersList}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#059669']} />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#F59E0B', '#F43F5E', '#2563EB']} />
         }
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
@@ -249,14 +249,14 @@ const styles = StyleSheet.create({
     color: '#64748B',
   },
   header: {
-    backgroundColor: '#059669',
+    backgroundColor: '#F59E0B',
     paddingTop: 45,
     paddingBottom: 16,
     paddingHorizontal: 20,
     elevation: 3,
-    shadowColor: '#000',
+    shadowColor: '#D97706',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.2,
     shadowRadius: 4,
   },
   headerRow: {
@@ -272,13 +272,13 @@ const styles = StyleSheet.create({
   },
   headerSubtitle: {
     fontSize: 13,
-    color: 'rgba(255, 255, 255, 0.85)',
+    color: 'rgba(255, 255, 255, 0.9)',
     marginTop: 2,
   },
   liveBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
@@ -287,13 +287,13 @@ const styles = StyleSheet.create({
     width: 7,
     height: 7,
     borderRadius: 4,
-    backgroundColor: '#4ADE80',
+    backgroundColor: '#38BDF8',
     marginRight: 5,
   },
   liveText: {
     fontSize: 12,
     color: '#FFFFFF',
-    fontWeight: '600',
+    fontWeight: '700',
   },
   ordersList: {
     padding: 16,
@@ -323,8 +323,8 @@ const styles = StyleSheet.create({
   orderId: {
     fontSize: 15,
     fontWeight: '700',
-    color: '#6366F1',
-    backgroundColor: '#EEF2FF',
+    color: '#2563EB',
+    backgroundColor: '#EFF6FF',
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 6,
@@ -381,7 +381,7 @@ const styles = StyleSheet.create({
   orderTotal: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#059669',
+    color: '#D97706',
   },
   orderTotalCancelled: {
     textDecorationLine: 'line-through',
@@ -413,7 +413,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   browseButton: {
-    backgroundColor: '#059669',
+    backgroundColor: '#F43F5E',
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 8,
@@ -425,9 +425,9 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   globalReadyBanner: {
-    backgroundColor: '#ECFDF5',
+    backgroundColor: '#FFF1F2',
     borderWidth: 2,
-    borderColor: '#10B981',
+    borderColor: '#F43F5E',
     borderRadius: 14,
     margin: 16,
     marginBottom: 4,
@@ -436,9 +436,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12,
     elevation: 3,
-    shadowColor: '#10B981',
+    shadowColor: '#F43F5E',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.25,
     shadowRadius: 4,
   },
   globalReadyIcon: {
@@ -447,16 +447,16 @@ const styles = StyleSheet.create({
   globalReadyTitle: {
     fontSize: 15,
     fontWeight: '800',
-    color: '#065F46',
+    color: '#BE123C',
   },
   globalReadySub: {
     fontSize: 12,
-    color: '#047857',
+    color: '#9F1239',
     marginTop: 2,
   },
   globalReadyArrow: {
     fontSize: 18,
-    color: '#059669',
+    color: '#F43F5E',
     fontWeight: 'bold',
   },
   metaBadgesRow: {

@@ -271,14 +271,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8FAFC',
   },
   header: {
-    backgroundColor: '#059669',
+    backgroundColor: '#F59E0B',
     paddingTop: 45,
     paddingBottom: 16,
     paddingHorizontal: 20,
     elevation: 3,
-    shadowColor: '#000',
+    shadowColor: '#D97706',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.2,
     shadowRadius: 4,
   },
   headerTitle: {
@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
   },
   headerSubtitle: {
     fontSize: 13,
-    color: 'rgba(255, 255, 255, 0.85)',
+    color: 'rgba(255, 255, 255, 0.9)',
     marginTop: 2,
   },
   content: {
@@ -314,12 +314,12 @@ const styles = StyleSheet.create({
     width: 76,
     height: 76,
     borderRadius: 38,
-    backgroundColor: '#059669',
+    backgroundColor: '#F43F5E',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
     elevation: 3,
-    shadowColor: '#059669',
+    shadowColor: '#F43F5E',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
@@ -346,18 +346,18 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   roleBadge: {
-    backgroundColor: '#ECFDF5',
+    backgroundColor: '#EFF6FF',
     paddingHorizontal: 10,
     paddingVertical: 3,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: '#A7F3D0',
+    borderColor: '#BFDBFE',
     marginTop: 4,
   },
   roleText: {
     fontSize: 11,
     fontWeight: '700',
-    color: '#059669',
+    color: '#2563EB',
     letterSpacing: 0.5,
   },
   menuSection: {
@@ -399,7 +399,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   badge: {
-    backgroundColor: '#10B981',
+    backgroundColor: '#F43F5E',
     borderRadius: 10,
     paddingHorizontal: 8,
     paddingVertical: 2,
@@ -506,8 +506,8 @@ const styles = StyleSheet.create({
     borderColor: '#CBD5E1',
   },
   categoryChipActive: {
-    backgroundColor: '#ECFDF5',
-    borderColor: '#10B981',
+    backgroundColor: '#EFF6FF',
+    borderColor: '#3B82F6',
   },
   categoryChipText: {
     fontSize: 12,
@@ -515,7 +515,7 @@ const styles = StyleSheet.create({
     color: '#475569',
   },
   categoryChipTextActive: {
-    color: '#059669',
+    color: '#2563EB',
     fontWeight: '700',
   },
   starsRow: {
@@ -564,7 +564,7 @@ const styles = StyleSheet.create({
   },
   submitBtn: {
     flex: 2,
-    backgroundColor: '#059669',
+    backgroundColor: '#F43F5E',
     paddingVertical: 12,
     borderRadius: 10,
     alignItems: 'center',
