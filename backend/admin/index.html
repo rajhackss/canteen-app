@@ -2,109 +2,347 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Canteen - Admin Panel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Smart Canteen - Admin Dashboard</title>
+    <!-- Modern Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary: #10b981;
+            --primary-dark: #059669;
+            --primary-light: #ecfdf5;
+            --secondary: #6366f1;
+            --danger: #ef4444;
+            --danger-light: #fef2f2;
+            --warning: #f59e0b;
+            --warning-light: #fffbeb;
+            --info: #0284c7;
+            --info-light: #f0f9ff;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --gray-light: #f1f5f9;
+            --border: #e2e8f0;
+            --card-bg: #ffffff;
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f5f5;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8fafc;
+            color: var(--dark);
+            line-height: 1.5;
+            min-height: 100vh;
         }
 
+        /* Container */
         .container {
-            max-width: 1200px;
+            width: 100%;
+            max-width: 1240px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 16px;
         }
 
+        /* Top Header */
         .header {
-            background-color: #4CAF50;
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
             color: white;
-            padding: 20px;
-            border-radius: 8px;
+            padding: 16px 20px;
+            border-radius: var(--radius-lg);
             margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .header-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .header h1 {
-            font-size: 24px;
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand h1 {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: #ffffff;
         }
 
         .header-right {
             display: flex;
             align-items: center;
-            gap: 15px;
-        }
-
-        .nav {
-            display: flex;
             gap: 10px;
         }
 
+        /* Navigation Bar */
+        .nav {
+            display: flex;
+            gap: 8px;
+            background: rgba(0, 0, 0, 0.12);
+            padding: 4px;
+            border-radius: var(--radius-md);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
         .nav button {
-            background-color: rgba(255, 255, 255, 0.2);
-            color: white;
+            flex: 1;
+            min-width: 90px;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.9);
             border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
+            padding: 9px 16px;
+            border-radius: var(--radius-sm);
             cursor: pointer;
             font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            white-space: nowrap;
+            transition: all 0.2s ease;
         }
 
         .nav button:hover {
-            background-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
         }
 
         .nav button.active {
-            background-color: white;
-            color: #4CAF50;
+            background: #ffffff;
+            color: var(--primary-dark);
+            box-shadow: var(--shadow-sm);
         }
 
-        .header-right .btn {
-            padding: 8px 16px;
-            font-size: 12px;
+        /* Common Button Styles */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 9px 16px;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            text-decoration: none;
         }
 
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+
+        .btn-secondary {
+            background-color: var(--gray-light);
+            color: var(--dark);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover {
+            background-color: #e2e8f0;
+        }
+
+        .btn-refresh {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+        .btn-refresh:hover {
+            background-color: rgba(255, 255, 255, 0.35);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .section-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        /* Card */
         .card {
-            background-color: white;
-            border-radius: 8px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
             padding: 20px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow-sm);
         }
 
-        .card h2 {
-            color: #333;
-            margin-bottom: 15px;
-            font-size: 20px;
+        /* Stats Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 18px 20px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background-color: var(--primary);
+        }
+
+        .stat-card.revenue-card::before {
+            background-color: #10b981;
+        }
+        .stat-card.pending-card::before {
+            background-color: #f59e0b;
+        }
+        .stat-card.cancelled-card::before {
+            background-color: #ef4444;
+        }
+        .stat-card.total-card::before {
+            background-color: #6366f1;
+        }
+
+        .stat-card h3 {
+            color: var(--gray);
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 4px;
+            word-break: break-word;
+        }
+
+        .stat-card.revenue-card .value {
+            color: #059669;
+        }
+
+        .stat-card.pending-card .value {
+            color: #d97706;
+        }
+
+        .stat-card.cancelled-card .value {
+            color: #dc2626;
+        }
+
+        .stat-subtext {
+            font-size: 12px;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Form layout */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 16px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 5px;
-            color: #666;
-            font-size: 14px;
+            margin-bottom: 6px;
+            color: var(--dark);
+            font-size: 13px;
+            font-weight: 600;
         }
 
         .form-group input,
         .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
             font-size: 14px;
+            font-family: inherit;
+            color: var(--dark);
+            background-color: #ffffff;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
         }
 
         .form-group textarea {
@@ -112,148 +350,201 @@
             resize: vertical;
         }
 
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
             cursor: pointer;
+            font-weight: 500;
+            margin-top: 6px;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        /* Filter Controls */
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+            background: #f1f5f9;
+            padding: 10px 14px;
+            border-radius: var(--radius-md);
+        }
+
+        .filter-bar label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gray);
+        }
+
+        .filter-bar select {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background-color: #ffffff;
             font-size: 14px;
             font-weight: 500;
         }
 
-        .btn-primary {
-            background-color: #4CAF50;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: #45a049;
-        }
-
-        .btn-danger {
-            background-color: #F44336;
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background-color: #da190b;
-        }
-
-        .btn-secondary {
-            background-color: #666;
-            color: white;
+        /* Responsive Table Container */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            background-color: #ffffff;
         }
 
         .table {
             width: 100%;
+            min-width: 680px;
             border-collapse: collapse;
+            text-align: left;
         }
 
         .table th,
         .table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+            vertical-align: middle;
         }
 
         .table th {
-            background-color: #f8f8f8;
+            background-color: #f8fafc;
             font-weight: 600;
-            color: #333;
+            color: var(--gray);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .table tr:last-child td {
+            border-bottom: none;
         }
 
         .table tr:hover {
-            background-color: #f9f9f9;
+            background-color: #f8fafc;
         }
 
-        .status-badge {
-            padding: 4px 8px;
-            border-radius: 12px;
+        .order-id {
+            font-family: monospace;
+            font-weight: 700;
+            color: var(--secondary);
+            background: #eef2ff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .customer-name {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .customer-sub {
             font-size: 12px;
-            font-weight: 500;
+            color: var(--gray);
+        }
+
+        .amount-cell {
+            font-weight: 700;
+            color: var(--dark);
+            white-space: nowrap;
+        }
+
+        .amount-cancelled {
+            text-decoration: line-through;
+            color: var(--gray);
+            font-weight: normal;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: capitalize;
+            white-space: nowrap;
         }
 
         .status-pending {
-            background-color: #FF9800;
-            color: white;
+            background-color: var(--warning-light);
+            color: #b45309;
+            border: 1px solid #fde68a;
         }
 
         .status-confirmed {
-            background-color: #2196F3;
-            color: white;
+            background-color: var(--info-light);
+            color: #0369a1;
+            border: 1px solid #bae6fd;
         }
 
         .status-preparing {
-            background-color: #9C27B0;
-            color: white;
+            background-color: #faf5ff;
+            color: #7e22ce;
+            border: 1px solid #e9d5ff;
         }
 
         .status-ready {
-            background-color: #4CAF50;
-            color: white;
+            background-color: #f0fdf4;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
         }
 
         .status-completed {
-            background-color: #8BC34A;
-            color: white;
+            background-color: #f0fdf4;
+            color: #166534;
+            border: 1px solid #86efac;
         }
 
         .status-cancelled {
-            background-color: #F44336;
-            color: white;
+            background-color: var(--danger-light);
+            color: #b91c1c;
+            border: 1px solid #fecaca;
         }
 
-        .hidden {
-            display: none;
+        /* Status update dropdown inside table */
+        .status-select {
+            padding: 6px 10px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            background-color: #ffffff;
+            color: var(--dark);
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            max-width: 150px;
         }
 
-        .loading {
-            text-align: center;
-            padding: 20px;
-            color: #666;
+        .status-select:focus {
+            outline: none;
+            border-color: var(--primary);
         }
 
-        .error {
-            background-color: #ffebee;
-            color: #c62828;
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 15px;
+        .actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
         }
 
-        .success {
-            background-color: #e8f5e9;
-            color: #2e7d32;
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 15px;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-        }
-
-        .stat-card {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .stat-card h3 {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
-
-        .stat-card .value {
-            font-size: 32px;
-            font-weight: bold;
-            color: #4CAF50;
-        }
-
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -261,8 +552,11 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
             z-index: 1000;
+            padding: 16px;
+            overflow-y: auto;
         }
 
         .modal.active {
@@ -272,11 +566,13 @@
         }
 
         .modal-content {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
+            background-color: var(--card-bg);
+            padding: 24px;
+            border-radius: var(--radius-lg);
             max-width: 500px;
-            width: 90%;
+            width: 100%;
+            box-shadow: var(--shadow-lg);
+            position: relative;
             max-height: 90vh;
             overflow-y: auto;
         }
@@ -286,10 +582,14 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 12px;
         }
 
         .modal-header h3 {
-            margin: 0;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--dark);
         }
 
         .close-btn {
@@ -297,144 +597,327 @@
             border: none;
             font-size: 24px;
             cursor: pointer;
-            color: #666;
+            color: var(--gray);
+            line-height: 1;
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
         }
 
-        .actions {
-            display: flex;
-            gap: 10px;
+        .close-btn:hover {
+            background-color: var(--gray-light);
+            color: var(--dark);
         }
 
-        .actions button {
-            padding: 5px 10px;
+        .hidden {
+            display: none !important;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 30px;
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        .error {
+            background-color: var(--danger-light);
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+
+        .live-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
             font-size: 12px;
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 10px;
+            border-radius: 999px;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #4ade80;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #4ade80;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.85); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+            .container {
+                padding: 12px;
+            }
+
+            .header {
+                padding: 14px 16px;
+                margin-bottom: 16px;
+            }
+
+            .brand h1 {
+                font-size: 18px;
+            }
+
+            .nav {
+                width: 100%;
+            }
+
+            .nav button {
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .stat-card {
+                padding: 14px 16px;
+            }
+
+            .stat-card .value {
+                font-size: 22px;
+            }
+
+            .card {
+                padding: 16px;
+                border-radius: var(--radius-md);
+            }
+
+            .table th,
+            .table td {
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+
+            .modal-content {
+                padding: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-top {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Main Top Bar -->
         <div class="header">
-            <h1>🍽️ Smart Canteen Admin</h1>
-            <div class="header-right">
-                <div class="nav">
-                    <button class="active" onclick="showSection('dashboard', this)">Dashboard</button>
-                    <button onclick="showSection('menu', this)">Menu</button>
-                    <button onclick="showSection('orders', this)">Orders</button>
+            <div class="header-top">
+                <div class="brand">
+                    <h1>🍽️ Smart Canteen Admin</h1>
+                    <span class="live-indicator"><span class="live-dot"></span> Live</span>
                 </div>
-                <button class="btn btn-danger" onclick="logout()">Logout</button>
+                <div class="header-right">
+                    <button class="btn btn-refresh" onclick="refreshCurrentSection()" title="Reload data">
+                        🔄 Refresh
+                    </button>
+                    <button class="btn btn-danger" onclick="logout()" style="padding: 7px 14px; font-size: 13px;">
+                        Logout
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Navigation -->
+            <div class="nav">
+                <button class="active" onclick="showSection('dashboard', this)">📊 Dashboard</button>
+                <button onclick="showSection('orders', this)">📋 Orders</button>
+                <button onclick="showSection('menu', this)">🍔 Menu Items</button>
             </div>
         </div>
 
+        <!-- Dashboard Section -->
         <div id="dashboard-section">
+            <div class="section-header">
+                <h2>Today's Performance Overview</h2>
+                <span style="font-size: 13px; color: var(--gray);">Auto-updates every 30s</span>
+            </div>
+
             <div class="grid">
-                <div class="stat-card">
-                    <h3>Total Orders Today</h3>
-                    <div class="value" id="total-orders">0</div>
+                <!-- Revenue Card (Excludes Cancelled) -->
+                <div class="stat-card revenue-card">
+                    <h3>Total Net Revenue Today</h3>
+                    <div class="value" id="total-revenue">₹0</div>
+                    <div class="stat-subtext">
+                        <span>✅ Excludes cancelled orders</span>
+                    </div>
                 </div>
-                <div class="stat-card">
+
+                <!-- Orders Today -->
+                <div class="stat-card total-card">
+                    <h3>Orders Placed Today</h3>
+                    <div class="value" id="total-orders">0</div>
+                    <div class="stat-subtext" id="active-orders-subtext">0 active</div>
+                </div>
+
+                <!-- Pending Orders -->
+                <div class="stat-card pending-card">
                     <h3>Pending Orders</h3>
                     <div class="value" id="pending-orders">0</div>
+                    <div class="stat-subtext">Needs confirmation/kitchen</div>
                 </div>
-                <div class="stat-card">
-                    <h3>Total Revenue Today</h3>
-                    <div class="value" id="total-revenue">₹0</div>
+
+                <!-- Cancelled Orders (shows count and money deducted) -->
+                <div class="stat-card cancelled-card">
+                    <h3>Cancelled Today</h3>
+                    <div class="value" id="cancelled-orders">0</div>
+                    <div class="stat-subtext" id="cancelled-revenue-subtext">₹0 excluded from revenue</div>
                 </div>
+
+                <!-- Menu Items Count -->
                 <div class="stat-card">
-                    <h3>Menu Items</h3>
+                    <h3>Total Menu Items</h3>
                     <div class="value" id="menu-items-count">0</div>
+                    <div class="stat-subtext" id="menu-avail-subtext">Active in catalog</div>
                 </div>
             </div>
         </div>
 
-        <div id="menu-section" class="hidden">
+        <!-- Orders Section -->
+        <div id="orders-section" class="hidden">
             <div class="card">
-                <h2>Add Menu Item</h2>
-                <form id="menu-form">
-                    <div class="form-group">
-                        <label>Name</label>
-                        <input type="text" id="menu-name" required>
+                <div class="section-header">
+                    <h2>Live Order Management</h2>
+                    <button class="btn btn-secondary" onclick="loadOrders()" style="padding: 6px 12px; font-size: 13px;">
+                        🔄 Refresh Orders
+                    </button>
+                </div>
+
+                <div class="filter-bar">
+                    <label for="order-filter">Filter Status:</label>
+                    <select id="order-filter" onchange="loadOrders()">
+                        <option value="">All Orders</option>
+                        <option value="pending">⏳ Pending</option>
+                        <option value="confirmed">👍 Confirmed</option>
+                        <option value="preparing">🍳 Preparing</option>
+                        <option value="ready">🔔 Ready for Pickup</option>
+                        <option value="completed">✅ Completed</option>
+                        <option value="cancelled">❌ Cancelled</option>
+                    </select>
+                </div>
+
+                <div id="orders-loading" class="loading">Loading orders...</div>
+                <div id="orders-error" class="error hidden"></div>
+
+                <!-- Responsive table wrapper -->
+                <div class="table-responsive">
+                    <table class="table" id="orders-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Ordered Items</th>
+                                <th>Amount</th>
+                                <th>Pickup Time</th>
+                                <th>Status</th>
+                                <th>Change Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menu Section -->
+        <div id="menu-section" class="hidden">
+            <!-- Add New Item -->
+            <div class="card">
+                <h2>➕ Add New Menu Item</h2>
+                <form id="menu-form" style="margin-top: 14px;">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="menu-name">Dish Name *</label>
+                            <input type="text" id="menu-name" required placeholder="e.g. Masala Dosa">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="menu-category">Category *</label>
+                            <select id="menu-category" required>
+                                <option value="breakfast">Breakfast</option>
+                                <option value="lunch">Lunch</option>
+                                <option value="snacks">Snacks</option>
+                                <option value="beverages">Beverages</option>
+                                <option value="dinner">Dinner</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="menu-price">Price (₹) *</label>
+                            <input type="number" id="menu-price" required min="0" step="1" placeholder="e.g. 60">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="menu-prep-time">Prep Time (min) *</label>
+                            <input type="number" id="menu-prep-time" required min="1" value="15">
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="menu-description">Description *</label>
+                            <textarea id="menu-description" required placeholder="Short description of ingredients or taste..."></textarea>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Description</label>
-                        <textarea id="menu-description" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Price (₹)</label>
-                        <input type="number" id="menu-price" required min="0">
-                    </div>
-                    <div class="form-group">
-                        <label>Category</label>
-                        <select id="menu-category" required>
-                            <option value="breakfast">Breakfast</option>
-                            <option value="lunch">Lunch</option>
-                            <option value="snacks">Snacks</option>
-                            <option value="beverages">Beverages</option>
-                            <option value="dinner">Dinner</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Preparation Time (minutes)</label>
-                        <input type="number" id="menu-prep-time" required min="1" value="15">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Add Menu Item</button>
+
+                    <button type="submit" class="btn btn-primary" style="margin-top: 8px;">
+                        Save Menu Item
+                    </button>
                 </form>
             </div>
 
+            <!-- Existing Items Table -->
             <div class="card">
-                <h2>Menu Items</h2>
+                <div class="section-header">
+                    <h2>Current Menu Items</h2>
+                    <button class="btn btn-secondary" onclick="loadMenu()" style="padding: 6px 12px; font-size: 13px;">
+                        🔄 Refresh Menu
+                    </button>
+                </div>
+
                 <div id="menu-loading" class="loading">Loading menu items...</div>
                 <div id="menu-error" class="error hidden"></div>
-                <table class="table" id="menu-table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Category</th>
-                            <th>Price</th>
-                            <th>Prep Time</th>
-                            <th>Available</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="menu-table-body"></tbody>
-                </table>
-            </div>
-        </div>
 
-        <div id="orders-section" class="hidden">
-            <div class="card">
-                <h2>Orders</h2>
-                <div class="form-group">
-                    <label>Filter by Status</label>
-                    <select id="order-filter" onchange="loadOrders()">
-                        <option value="">All Orders</option>
-                        <option value="pending">Pending</option>
-                        <option value="confirmed">Confirmed</option>
-                        <option value="preparing">Preparing</option>
-                        <option value="ready">Ready</option>
-                        <option value="completed">Completed</option>
-                        <option value="cancelled">Cancelled</option>
-                    </select>
+                <!-- Responsive table wrapper -->
+                <div class="table-responsive">
+                    <table class="table" id="menu-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Prep Time</th>
+                                <th>Available</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="menu-table-body"></tbody>
+                    </table>
                 </div>
-                <div id="orders-loading" class="loading">Loading orders...</div>
-                <div id="orders-error" class="error hidden"></div>
-                <table class="table" id="orders-table">
-                    <thead>
-                        <tr>
-                            <th>Order ID</th>
-                            <th>Customer</th>
-                            <th>Items</th>
-                            <th>Total</th>
-                            <th>Pickup Time</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="orders-table-body"></tbody>
-                </table>
             </div>
         </div>
     </div>
 
+    <!-- Edit Menu Item Modal -->
     <div id="edit-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -443,20 +926,14 @@
             </div>
             <form id="edit-menu-form">
                 <input type="hidden" id="edit-menu-id">
+                
                 <div class="form-group">
-                    <label>Name</label>
+                    <label for="edit-menu-name">Dish Name</label>
                     <input type="text" id="edit-menu-name" required>
                 </div>
+
                 <div class="form-group">
-                    <label>Description</label>
-                    <textarea id="edit-menu-description" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Price (₹)</label>
-                    <input type="number" id="edit-menu-price" required min="0">
-                </div>
-                <div class="form-group">
-                    <label>Category</label>
+                    <label for="edit-menu-category">Category</label>
                     <select id="edit-menu-category" required>
                         <option value="breakfast">Breakfast</option>
                         <option value="lunch">Lunch</option>
@@ -465,16 +942,32 @@
                         <option value="dinner">Dinner</option>
                     </select>
                 </div>
+
                 <div class="form-group">
-                    <label>Preparation Time (minutes)</label>
+                    <label for="edit-menu-price">Price (₹)</label>
+                    <input type="number" id="edit-menu-price" required min="0">
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-menu-prep-time">Preparation Time (minutes)</label>
                     <input type="number" id="edit-menu-prep-time" required min="1">
                 </div>
+
                 <div class="form-group">
-                    <label>
-                        <input type="checkbox" id="edit-menu-available"> Available
+                    <label for="edit-menu-description">Description</label>
+                    <textarea id="edit-menu-description" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="edit-menu-available"> Available in Canteen
                     </label>
                 </div>
-                <button type="submit" class="btn btn-primary">Update Menu Item</button>
+
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Update Item</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                </div>
             </form>
         </div>
     </div>
@@ -483,6 +976,8 @@
         // Dynamically resolve /api on HTTP/HTTPS to work on Render, localhost, or custom domain
         const API_URL = window.location.protocol.startsWith('http') ? '/api' : 'http://localhost:5000/api';
         let authToken = localStorage.getItem('adminToken');
+        let currentSection = 'dashboard';
+        let autoRefreshTimer = null;
 
         // Check authentication immediately
         function checkAuth() {
@@ -495,20 +990,23 @@
 
         // Logout
         function logout() {
-            localStorage.removeItem('adminToken');
-            window.location.href = '/admin/login.html';
+            if (confirm('Are you sure you want to log out of the Admin Panel?')) {
+                localStorage.removeItem('adminToken');
+                window.location.href = '/admin/login.html';
+            }
         }
 
         // Show section
         function showSection(section, btnElement) {
+            currentSection = section;
             document.querySelectorAll('.nav button').forEach(btn => btn.classList.remove('active'));
             if (btnElement) {
                 btnElement.classList.add('active');
             } else {
                 const buttons = document.querySelectorAll('.nav button');
                 if (section === 'dashboard' && buttons[0]) buttons[0].classList.add('active');
-                if (section === 'menu' && buttons[1]) buttons[1].classList.add('active');
-                if (section === 'orders' && buttons[2]) buttons[2].classList.add('active');
+                if (section === 'orders' && buttons[1]) buttons[1].classList.add('active');
+                if (section === 'menu' && buttons[2]) buttons[2].classList.add('active');
             }
 
             document.getElementById('dashboard-section').classList.add('hidden');
@@ -519,8 +1017,14 @@
             if (targetSection) targetSection.classList.remove('hidden');
 
             if (section === 'dashboard') loadDashboard();
-            if (section === 'menu') loadMenu();
             if (section === 'orders') loadOrders();
+            if (section === 'menu') loadMenu();
+        }
+
+        function refreshCurrentSection() {
+            if (currentSection === 'dashboard') loadDashboard();
+            if (currentSection === 'orders') loadOrders();
+            if (currentSection === 'menu') loadMenu();
         }
 
         // API calls with authorization and auto-redirect on session expiry
@@ -554,7 +1058,7 @@
             return response.json();
         }
 
-        // Dashboard
+        // Dashboard Metrics (Fixed Revenue logic: strictly excludes cancelled orders)
         async function loadDashboard() {
             try {
                 const orders = await apiCall('/orders');
@@ -565,24 +1069,148 @@
                     order.createdAt && new Date(order.createdAt).toDateString() === today
                 );
 
+                const pendingOrders = todayOrders.filter(o => o.status === 'pending');
+                const cancelledOrders = todayOrders.filter(o => o.status === 'cancelled');
+                const completedOrders = todayOrders.filter(o => o.status === 'completed');
+
+                // ⚠️ CRITICAL: Exclude cancelled orders from total revenue!
+                const revenueOrders = todayOrders.filter(o => o.status !== 'cancelled');
+                const netRevenue = revenueOrders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+                const cancelledRevenue = cancelledOrders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+
+                // Update UI elements
+                document.getElementById('total-revenue').textContent = '₹' + netRevenue.toLocaleString('en-IN');
                 document.getElementById('total-orders').textContent = todayOrders.length;
-                document.getElementById('pending-orders').textContent = 
-                    todayOrders.filter(o => o.status === 'pending').length;
-                document.getElementById('total-revenue').textContent = 
-                    '₹' + todayOrders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+                
+                const activeOrdersSub = document.getElementById('active-orders-subtext');
+                if (activeOrdersSub) {
+                    activeOrdersSub.textContent = `${revenueOrders.length} active (${completedOrders.length} completed)`;
+                }
+
+                document.getElementById('pending-orders').textContent = pendingOrders.length;
+                document.getElementById('cancelled-orders').textContent = cancelledOrders.length;
+
+                const cancelledSub = document.getElementById('cancelled-revenue-subtext');
+                if (cancelledSub) {
+                    cancelledSub.textContent = `₹${cancelledRevenue.toLocaleString('en-IN')} deducted from revenue`;
+                }
+
                 document.getElementById('menu-items-count').textContent = (menu || []).length;
+                const menuAvailSub = document.getElementById('menu-avail-subtext');
+                if (menuAvailSub) {
+                    const availCount = (menu || []).filter(m => m.available).length;
+                    menuAvailSub.textContent = `${availCount} available now`;
+                }
             } catch (error) {
                 console.error('Error loading dashboard:', error);
             }
         }
 
-        // Menu
+        // Orders Management
+        async function loadOrders() {
+            try {
+                document.getElementById('orders-loading').classList.remove('hidden');
+                document.getElementById('orders-error').classList.add('hidden');
+
+                const status = document.getElementById('order-filter').value;
+                const endpoint = status ? `/orders?status=${status}` : '/orders';
+                const orders = await apiCall(endpoint);
+                renderOrdersTable(orders);
+            } catch (error) {
+                document.getElementById('orders-error').textContent = error.message || 'Error loading orders';
+                document.getElementById('orders-error').classList.remove('hidden');
+            } finally {
+                document.getElementById('orders-loading').classList.add('hidden');
+            }
+        }
+
+        function renderOrdersTable(orders) {
+            const tbody = document.getElementById('orders-table-body');
+            if (!orders || orders.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 25px; color: var(--gray);">
+                            No orders found for the selected filter.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = orders.map(order => {
+                const shortId = order._id ? order._id.slice(-6).toUpperCase() : 'N/A';
+                const userName = order.user?.name || 'Customer';
+                const userContact = order.user?.phone || order.user?.email || '';
+                const itemsList = (order.items || []).map(i => `
+                    <div>• ${i.menuItem?.name || 'Item'} <strong style="color:var(--dark);">x${i.quantity}</strong></div>
+                `).join('') || '<span style="color:var(--gray);">No items</span>';
+
+                const isCancelled = order.status === 'cancelled';
+                const totalDisplay = isCancelled
+                    ? `<span class="amount-cell amount-cancelled">₹${order.totalAmount || 0}</span> <span style="font-size:11px; color:var(--danger); display:block;">(Deducted)</span>`
+                    : `<span class="amount-cell">₹${order.totalAmount || 0}</span>`;
+
+                const timeDisplay = order.pickupTime ? new Date(order.pickupTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A';
+
+                return `
+                    <tr style="${isCancelled ? 'background-color: #fffaf0;' : ''}">
+                        <td><span class="order-id">#${shortId}</span></td>
+                        <td>
+                            <div class="customer-name">${userName}</div>
+                            ${userContact ? `<div class="customer-sub">${userContact}</div>` : ''}
+                        </td>
+                        <td>${itemsList}</td>
+                        <td>${totalDisplay}</td>
+                        <td><strong>${timeDisplay}</strong></td>
+                        <td><span class="status-badge status-${order.status}">${order.status}</span></td>
+                        <td>
+                            <select onchange="handleStatusChange('${order._id}', this.value, '${order.status}', this)" class="status-select">
+                                <option value="">Action...</option>
+                                <option value="pending" ${order.status === 'pending' ? 'disabled' : ''}>⏳ Pending</option>
+                                <option value="confirmed" ${order.status === 'confirmed' ? 'disabled' : ''}>👍 Confirmed</option>
+                                <option value="preparing" ${order.status === 'preparing' ? 'disabled' : ''}>🍳 Preparing</option>
+                                <option value="ready" ${order.status === 'ready' ? 'disabled' : ''}>🔔 Ready</option>
+                                <option value="completed" ${order.status === 'completed' ? 'disabled' : ''}>✅ Completed</option>
+                                <option value="cancelled" ${order.status === 'cancelled' ? 'disabled' : ''} style="color: var(--danger); font-weight: bold;">❌ Cancel Order</option>
+                            </select>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function handleStatusChange(orderId, newStatus, currentStatus, selectElement) {
+            if (!newStatus) return;
+
+            // Extra confirmation when cancelling an order
+            if (newStatus === 'cancelled') {
+                const confirmed = confirm('⚠️ Are you sure you want to CANCEL this order?\n\nThis will immediately remove its amount from today\'s total revenue calculation.');
+                if (!confirmed) {
+                    selectElement.value = '';
+                    return;
+                }
+            }
+
+            try {
+                await apiCall(`/orders/${orderId}/status`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({ status: newStatus }),
+                });
+
+                // Immediately reload orders AND refresh dashboard so revenue update is instant!
+                await Promise.all([loadOrders(), loadDashboard()]);
+            } catch (error) {
+                alert('Error updating order status: ' + error.message);
+                selectElement.value = '';
+            }
+        }
+
+        // Menu Management
         async function loadMenu() {
             try {
                 document.getElementById('menu-loading').classList.remove('hidden');
                 document.getElementById('menu-error').classList.add('hidden');
 
-                // Load all items including unavailable items for admin
                 const menuItems = await apiCall('/menu?all=true');
                 renderMenuTable(menuItems);
             } catch (error) {
@@ -595,16 +1223,32 @@
 
         function renderMenuTable(menuItems) {
             const tbody = document.getElementById('menu-table-body');
-            tbody.innerHTML = (menuItems || []).map(item => `
+            if (!menuItems || menuItems.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 25px; color: var(--gray);">
+                            No menu items found. Add your first dish above!
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = menuItems.map(item => `
                 <tr>
-                    <td>${item.name || ''}</td>
-                    <td>${item.category || ''}</td>
-                    <td>₹${item.price || 0}</td>
-                    <td>${item.preparationTime || 0} min</td>
-                    <td>${item.available ? '✅ Yes' : '❌ No'}</td>
-                    <td class="actions">
-                        <button class="btn btn-secondary" onclick="editMenuItem('${item._id}')">Edit</button>
-                        <button class="btn btn-danger" onclick="deleteMenuItem('${item._id}')">Delete</button>
+                    <td>
+                        <strong style="color: var(--dark); font-size: 15px;">${item.name || ''}</strong>
+                        ${item.description ? `<div style="font-size: 12px; color: var(--gray);">${item.description}</div>` : ''}
+                    </td>
+                    <td><span style="text-transform: capitalize; background: var(--gray-light); padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: 500;">${item.category || ''}</span></td>
+                    <td><strong style="color: #059669; font-size: 15px;">₹${item.price || 0}</strong></td>
+                    <td>${item.preparationTime || 0} mins</td>
+                    <td>${item.available ? '<span style="color: #16a34a; font-weight: 600;">✅ Active</span>' : '<span style="color: #dc2626; font-weight: 600;">❌ Out of Stock</span>'}</td>
+                    <td>
+                        <div class="actions">
+                            <button class="btn btn-secondary" onclick="editMenuItem('${item._id}')" style="padding: 5px 10px; font-size: 12px;">Edit</button>
+                            <button class="btn btn-danger" onclick="deleteMenuItem('${item._id}')" style="padding: 5px 10px; font-size: 12px;">Delete</button>
+                        </div>
                     </td>
                 </tr>
             `).join('');
@@ -612,13 +1256,19 @@
 
         document.getElementById('menu-form').addEventListener('submit', async (e) => {
             e.preventDefault();
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            
             try {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Saving...';
+
                 const menuItem = {
-                    name: document.getElementById('menu-name').value,
-                    description: document.getElementById('menu-description').value,
+                    name: document.getElementById('menu-name').value.trim(),
+                    description: document.getElementById('menu-description').value.trim(),
                     price: parseFloat(document.getElementById('menu-price').value),
                     category: document.getElementById('menu-category').value,
                     preparationTime: parseInt(document.getElementById('menu-prep-time').value),
+                    available: true,
                 };
 
                 await apiCall('/menu', {
@@ -627,9 +1277,13 @@
                 });
 
                 document.getElementById('menu-form').reset();
-                loadMenu();
+                alert('Menu item added successfully!');
+                await Promise.all([loadMenu(), loadDashboard()]);
             } catch (error) {
                 alert('Error adding menu item: ' + error.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Save Menu Item';
             }
         });
 
@@ -660,8 +1314,8 @@
             try {
                 const id = document.getElementById('edit-menu-id').value;
                 const menuItem = {
-                    name: document.getElementById('edit-menu-name').value,
-                    description: document.getElementById('edit-menu-description').value,
+                    name: document.getElementById('edit-menu-name').value.trim(),
+                    description: document.getElementById('edit-menu-description').value.trim(),
                     price: parseFloat(document.getElementById('edit-menu-price').value),
                     category: document.getElementById('edit-menu-category').value,
                     preparationTime: parseInt(document.getElementById('edit-menu-prep-time').value),
@@ -674,83 +1328,39 @@
                 });
 
                 closeModal();
-                loadMenu();
+                alert('Menu item updated successfully!');
+                await Promise.all([loadMenu(), loadDashboard()]);
             } catch (error) {
                 alert('Error updating menu item: ' + error.message);
             }
         });
 
         async function deleteMenuItem(id) {
-            if (!confirm('Are you sure you want to delete this menu item?')) return;
+            if (!confirm('Are you sure you want to permanently delete this menu item?')) return;
 
             try {
                 await apiCall(`/menu/${id}`, { method: 'DELETE' });
-                loadMenu();
+                await Promise.all([loadMenu(), loadDashboard()]);
             } catch (error) {
                 alert('Error deleting menu item: ' + error.message);
             }
         }
 
-        // Orders
-        async function loadOrders() {
-            try {
-                document.getElementById('orders-loading').classList.remove('hidden');
-                document.getElementById('orders-error').classList.add('hidden');
-
-                const status = document.getElementById('order-filter').value;
-                const endpoint = status ? `/orders?status=${status}` : '/orders';
-                const orders = await apiCall(endpoint);
-                renderOrdersTable(orders);
-            } catch (error) {
-                document.getElementById('orders-error').textContent = error.message || 'Error loading orders';
-                document.getElementById('orders-error').classList.remove('hidden');
-            } finally {
-                document.getElementById('orders-loading').classList.add('hidden');
-            }
+        // Auto-refresh data every 30 seconds for live orders and revenue updates
+        function startAutoRefresh() {
+            if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+            autoRefreshTimer = setInterval(() => {
+                if (document.visibilityState === 'visible') {
+                    if (currentSection === 'dashboard') loadDashboard();
+                    if (currentSection === 'orders') loadOrders();
+                }
+            }, 30000);
         }
 
-        function renderOrdersTable(orders) {
-            const tbody = document.getElementById('orders-table-body');
-            tbody.innerHTML = (orders || []).map(order => `
-                <tr>
-                    <td>#${order._id ? order._id.slice(-6) : 'N/A'}</td>
-                    <td>${order.user?.name || 'Unknown'}</td>
-                    <td>${(order.items || []).map(i => `${i.menuItem?.name || 'Item'} x${i.quantity}`).join(', ') || 'No items'}</td>
-                    <td>₹${order.totalAmount || 0}</td>
-                    <td>${order.pickupTime ? new Date(order.pickupTime).toLocaleString() : 'N/A'}</td>
-                    <td><span class="status-badge status-${order.status}">${order.status}</span></td>
-                    <td class="actions">
-                        <select onchange="updateOrderStatus('${order._id}', this.value)" class="btn btn-secondary">
-                            <option value="">Update Status</option>
-                            <option value="pending">Pending</option>
-                            <option value="confirmed">Confirmed</option>
-                            <option value="preparing">Preparing</option>
-                            <option value="ready">Ready</option>
-                            <option value="completed">Completed</option>
-                            <option value="cancelled">Cancelled</option>
-                        </select>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        async function updateOrderStatus(orderId, status) {
-            if (!status) return;
-
-            try {
-                await apiCall(`/orders/${orderId}/status`, {
-                    method: 'PATCH',
-                    body: JSON.stringify({ status }),
-                });
-                loadOrders();
-            } catch (error) {
-                alert('Error updating order status: ' + error.message);
-            }
-        }
-
-        // Initialize only if authenticated
+        // Initialize dashboard if authorized
         if (checkAuth()) {
             loadDashboard();
+            startAutoRefresh();
         }
     </script>
 </body>
