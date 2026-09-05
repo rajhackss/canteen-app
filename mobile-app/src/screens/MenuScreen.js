@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import {
   View,
   Text,
@@ -14,17 +14,11 @@ import { menuAPI } from '../services/api';
 
 const MenuScreen = ({ navigation }) => {
   const [menuItems, setMenuItems] = useState([]);
-  const [filteredItems, setFilteredItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedBudget, setSelectedBudget] = useState('all');
-  const selectedCategoryRef = useRef('all');
-  const selectedBudgetRef = useRef('all');
   const hasLoadedOnce = useRef(false);
-
-  selectedCategoryRef.current = selectedCategory;
-  selectedBudgetRef.current = selectedBudget;
 
   const categories = ['all', 'breakfast', 'lunch', 'snacks', 'beverages', 'dinner'];
 
@@ -36,17 +30,25 @@ const MenuScreen = ({ navigation }) => {
     { id: '200', label: '≤ ₹200' },
   ];
 
-  const applyFilters = (items, category, budget) => {
-    let result = items;
-    if (category !== 'all') {
-      result = result.filter(item => item.category === category);
-    }
-    if (budget !== 'all') {
-      const maxPrice = Number(budget);
-      result = result.filter(item => Number(item.price) <= maxPrice);
-    }
-    return result;
-  };
+  // Reactive and bulletproof filter computation for category & budget
+  const filteredItems = useMemo(() => {
+    return menuItems.filter((item) => {
+      // Category filter (case-insensitive & trimmed)
+      const categoryMatch =
+        selectedCategory === 'all' ||
+        String(item.category || '').trim().toLowerCase() === selectedCategory.toLowerCase();
+
+      // Budget filter (numerical price comparison)
+      if (selectedBudget === 'all') {
+        return categoryMatch;
+      }
+      const maxBudget = parseFloat(selectedBudget);
+      const itemPrice = parseFloat(item.price);
+      const budgetMatch = !isNaN(itemPrice) && itemPrice <= maxBudget;
+
+      return categoryMatch && budgetMatch;
+    });
+  }, [menuItems, selectedCategory, selectedBudget]);
 
   const loadMenuItems = async (silent = false) => {
     try {
@@ -56,8 +58,6 @@ const MenuScreen = ({ navigation }) => {
       const response = await menuAPI.getAll();
       const items = response.data || [];
       setMenuItems(items);
-      
-      setFilteredItems(applyFilters(items, selectedCategoryRef.current, selectedBudgetRef.current));
       hasLoadedOnce.current = true;
     } catch (error) {
       if (!silent) {
@@ -91,12 +91,10 @@ const MenuScreen = ({ navigation }) => {
 
   const filterByCategory = (category) => {
     setSelectedCategory(category);
-    setFilteredItems(applyFilters(menuItems, category, selectedBudget));
   };
 
   const filterByBudget = (budget) => {
     setSelectedBudget(budget);
-    setFilteredItems(applyFilters(menuItems, selectedCategory, budget));
   };
 
   const renderMenuItem = ({ item }) => {
@@ -137,9 +135,9 @@ const MenuScreen = ({ navigation }) => {
               </Text>
               <View style={styles.ratingBadge}>
                 <Text style={styles.ratingText}>
-                  ⭐ {item.rating ? Number(item.rating).toFixed(1) : '4.5'}
+                  ⭐ {item.numReviews > 0 && item.rating > 0 ? Number(item.rating).toFixed(1) : 'New'}
                 </Text>
-                {item.numReviews ? (
+                {item.numReviews > 0 ? (
                   <Text style={styles.reviewsCount}>({item.numReviews})</Text>
                 ) : null}
               </View>

@@ -63,10 +63,10 @@ const MenuItemDetailScreen = ({ route, navigation }) => {
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#FEF3C7', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6 }}>
               <Text style={{ color: '#B45309', fontWeight: '700', fontSize: 12 }}>
-                ⭐ {item.rating ? Number(item.rating).toFixed(1) : '4.5'}
+                ⭐ {item.numReviews > 0 && item.rating > 0 ? Number(item.rating).toFixed(1) : 'New Dish'}
               </Text>
-              {item.numReviews ? (
-                <Text style={{ color: '#92400E', fontSize: 11, marginLeft: 3 }}>({item.numReviews})</Text>
+              {item.numReviews > 0 ? (
+                <Text style={{ color: '#92400E', fontSize: 11, marginLeft: 3 }}>({item.numReviews} reviews)</Text>
               ) : null}
             </View>
           </View>

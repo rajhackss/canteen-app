@@ -82,17 +82,6 @@ const ProfileScreen = ({ navigation }) => {
 
   const menuItems = [
     {
-      icon: '📋',
-      title: 'My Orders',
-      onPress: () => navigation.navigate('Orders'),
-    },
-    {
-      icon: '🛒',
-      title: 'My Cart',
-      onPress: () => navigation.navigate('Cart'),
-      badge: getCartCount() > 0 ? getCartCount() : null,
-    },
-    {
       icon: '💬',
       title: 'Canteen Digital Feedback',
       onPress: () => setFeedbackModalVisible(true),

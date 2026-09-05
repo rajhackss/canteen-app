@@ -224,9 +224,20 @@ exports.rateOrder = async (req, res) => {
       if (menuItemId) {
         const menuItem = await MenuItem.findById(menuItemId);
         if (menuItem) {
-          const currentTotal = (menuItem.rating || 4.5) * (menuItem.numReviews || 1);
-          const newNumReviews = (menuItem.numReviews || 0) + 1;
-          const newRating = Number(((currentTotal + numRating) / (newNumReviews + 1)).toFixed(1));
+          const currentReviews = menuItem.numReviews || 0;
+          const currentRating = menuItem.rating || 0;
+          let newRating;
+          let newNumReviews;
+
+          if (currentReviews === 0 || currentRating === 0) {
+            newRating = numRating;
+            newNumReviews = 1;
+          } else {
+            const currentTotal = currentRating * currentReviews;
+            newNumReviews = currentReviews + 1;
+            newRating = Number(((currentTotal + numRating) / newNumReviews).toFixed(1));
+          }
+
           menuItem.rating = Math.min(5, Math.max(1, newRating));
           menuItem.numReviews = newNumReviews;
           await menuItem.save();
