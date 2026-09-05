@@ -106,11 +106,7 @@ const LoginScreen = ({ navigation }) => {
 
             <TouchableOpacity
               style={styles.adminButton}
-              onPress={() => {
-                Linking.openURL(ADMIN_URL).catch(() => {
-                  Alert.alert('Error', 'Unable to open Admin Portal URL: ' + ADMIN_URL);
-                });
-              }}
+              onPress={() => navigation.navigate('Admin')}
             >
               <Text style={styles.adminButtonText}>🛡️ Open Admin Portal</Text>
             </TouchableOpacity>

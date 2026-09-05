@@ -91,6 +91,20 @@ const OrderDetailScreen = ({ route, navigation }) => {
     }
   };
 
+  const formatPickupTime = (time) => {
+    if (!time) return 'As soon as ready';
+    const d = new Date(time);
+    if (!isNaN(d.getTime())) {
+      return d.toLocaleString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+        month: 'short',
+        day: 'numeric',
+      });
+    }
+    return String(time);
+  };
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -155,7 +169,7 @@ const OrderDetailScreen = ({ route, navigation }) => {
             <View style={styles.infoRow}>
               <Text style={styles.infoLabel}>Pickup Scheduled:</Text>
               <Text style={styles.infoValue}>
-                {new Date(order.pickupTime).toLocaleString([], { hour: '2-digit', minute: '2-digit', month: 'short', day: 'numeric' })}
+                {formatPickupTime(order.pickupTime)}
               </Text>
             </View>
             <View style={styles.infoRow}>

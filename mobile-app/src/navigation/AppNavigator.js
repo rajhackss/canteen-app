@@ -16,6 +16,7 @@ import CheckoutScreen from '../screens/CheckoutScreen';
 import OrdersScreen from '../screens/OrdersScreen';
 import OrderDetailScreen from '../screens/OrderDetailScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import AdminScreen from '../screens/AdminScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -142,6 +143,11 @@ const AppNavigator = () => {
             />
           </>
         )}
+        <Stack.Screen 
+          name="Admin" 
+          component={AdminScreen} 
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

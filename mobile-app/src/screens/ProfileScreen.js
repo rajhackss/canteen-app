@@ -43,6 +43,11 @@ const ProfileScreen = ({ navigation }) => {
       onPress: () => navigation.navigate('Cart'),
       badge: getCartCount() > 0 ? getCartCount() : null,
     },
+    {
+      icon: '🛡️',
+      title: 'Admin Portal',
+      onPress: () => navigation.navigate('Admin'),
+    },
   ];
 
   return (

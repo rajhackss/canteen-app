@@ -74,6 +74,15 @@ const OrdersScreen = ({ navigation }) => {
     }
   };
 
+  const formatPickupTime = (time) => {
+    if (!time) return 'As soon as ready';
+    const d = new Date(time);
+    if (!isNaN(d.getTime())) {
+      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+    return String(time);
+  };
+
   const renderOrderItem = ({ item }) => {
     const statusStyle = getStatusStyle(item.status);
 
@@ -127,10 +136,7 @@ const OrdersScreen = ({ navigation }) => {
           <View style={styles.pickupContainer}>
             <Text style={styles.pickupLabel}>Pickup Time</Text>
             <Text style={styles.pickupTime}>
-              ⏱ {new Date(item.pickupTime).toLocaleTimeString([], {
-                hour: '2-digit',
-                minute: '2-digit',
-              })}
+              ⏱ {formatPickupTime(item.pickupTime)}
             </Text>
           </View>
         </View>

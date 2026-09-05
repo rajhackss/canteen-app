@@ -1,10 +1,61 @@
 const Order = require('../models/Order');
 const MenuItem = require('../models/MenuItem');
 
+// Helper to safely parse pickup time into a valid Date object
+function parsePickupTime(input) {
+  if (!input) {
+    return new Date(Date.now() + 20 * 60 * 1000); // default 20 minutes from now
+  }
+
+  // 1. If it's already a valid Date or ISO string or numeric timestamp
+  const directDate = new Date(input);
+  if (!isNaN(directDate.getTime()) && directDate.getFullYear() > 2020) {
+    return directDate;
+  }
+
+  const str = String(input).trim().toLowerCase();
+
+  // 2. Relative time like "15 mins", "in 20 min", "30m", "1 hr", "1 hour"
+  const relativeMatch = str.match(/^(?:in\s*)?(\d+)\s*(m|min|mins|minutes|h|hr|hrs|hours)?$/i);
+  if (relativeMatch) {
+    const val = parseInt(relativeMatch[1], 10);
+    const unit = (relativeMatch[2] || 'm').toLowerCase();
+    const minutes = unit.startsWith('h') ? val * 60 : val;
+    return new Date(Date.now() + minutes * 60 * 1000);
+  }
+
+  // 3. Time format like "4 pm", "4:30 pm", "4pm", "16:30", "4:00"
+  const timeMatch = str.match(/(\d{1,2})(?::(\d{2}))?\s*(am|pm)?/i);
+  if (timeMatch) {
+    let hours = parseInt(timeMatch[1], 10);
+    const minutes = timeMatch[2] ? parseInt(timeMatch[2], 10) : 0;
+    const ampm = timeMatch[3] ? timeMatch[3].toLowerCase() : null;
+
+    if (ampm === 'pm' && hours < 12) hours += 12;
+    if (ampm === 'am' && hours === 12) hours = 0;
+
+    const targetDate = new Date();
+    targetDate.setHours(hours, minutes, 0, 0);
+
+    // If the time already passed today by more than 5 minutes, assume next day
+    if (targetDate.getTime() < Date.now() - 5 * 60 * 1000) {
+      targetDate.setDate(targetDate.getDate() + 1);
+    }
+    return targetDate;
+  }
+
+  // Fallback to 20 minutes from now
+  return new Date(Date.now() + 20 * 60 * 1000);
+}
+
 // Create new order
 exports.createOrder = async (req, res) => {
   try {
     const { items, pickupTime, specialInstructions, paymentMethod } = req.body;
+
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ message: 'Order must include at least one item' });
+    }
 
     // Validate items and calculate total
     let totalAmount = 0;
@@ -34,7 +85,7 @@ exports.createOrder = async (req, res) => {
       user: req.user.id,
       items: orderItems,
       totalAmount,
-      pickupTime: new Date(pickupTime),
+      pickupTime: parsePickupTime(pickupTime),
       specialInstructions: specialInstructions || '',
       paymentMethod: paymentMethod || 'cash'
     });
