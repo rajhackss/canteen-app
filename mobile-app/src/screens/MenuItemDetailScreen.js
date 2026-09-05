@@ -24,7 +24,13 @@ const MenuItemDetailScreen = ({ route, navigation }) => {
     }
   };
 
+  const isSoldOut = item.isAvailable === false;
+
   const addToCartHandler = () => {
+    if (isSoldOut) {
+      Alert.alert('Item Sold Out', 'Sorry, this dish is currently out of stock.');
+      return;
+    }
     addToCart(item, quantity);
     Alert.alert('Added to Cart', `${quantity} x ${item.name} added to cart`);
     navigation.goBack();
@@ -38,15 +44,37 @@ const MenuItemDetailScreen = ({ route, navigation }) => {
         </View>
 
         <View style={styles.details}>
-          <Text style={styles.name}>{item.name}</Text>
-          <Text style={styles.category}>
-            {item.category.charAt(0).toUpperCase() + item.category.slice(1)}
-          </Text>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Text style={[styles.name, isSoldOut && { color: '#94A3B8' }]}>{item.name}</Text>
+            {isSoldOut ? (
+              <View style={{ backgroundColor: '#FEE2E2', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6 }}>
+                <Text style={{ color: '#DC2626', fontWeight: '800', fontSize: 12 }}>🚫 SOLD OUT</Text>
+              </View>
+            ) : (
+              <View style={{ backgroundColor: '#ECFDF5', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6 }}>
+                <Text style={{ color: '#059669', fontWeight: '800', fontSize: 12 }}>🟢 IN STOCK</Text>
+              </View>
+            )}
+          </View>
+
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+            <Text style={styles.category}>
+              {item.category ? item.category.charAt(0).toUpperCase() + item.category.slice(1) : 'General'}
+            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#FEF3C7', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6 }}>
+              <Text style={{ color: '#B45309', fontWeight: '700', fontSize: 12 }}>
+                ⭐ {item.rating ? Number(item.rating).toFixed(1) : '4.5'}
+              </Text>
+              {item.numReviews ? (
+                <Text style={{ color: '#92400E', fontSize: 11, marginLeft: 3 }}>({item.numReviews})</Text>
+              ) : null}
+            </View>
+          </View>
           
           <View style={styles.priceContainer}>
             <Text style={styles.price}>₹{item.price}</Text>
             <Text style={styles.prepTime}>
-              ⏱ {item.preparationTime} minutes
+              ⏱ {item.preparationTime || 10} minutes preparation
             </Text>
           </View>
 
@@ -55,23 +83,25 @@ const MenuItemDetailScreen = ({ route, navigation }) => {
             <Text style={styles.description}>{item.description}</Text>
           </View>
 
-          <View style={styles.quantityContainer}>
-            <TouchableOpacity
-              style={styles.quantityButton}
-              onPress={decreaseQuantity}
-            >
-              <Text style={styles.quantityButtonText}>-</Text>
-            </TouchableOpacity>
-            
-            <Text style={styles.quantity}>{quantity}</Text>
-            
-            <TouchableOpacity
-              style={styles.quantityButton}
-              onPress={increaseQuantity}
-            >
-              <Text style={styles.quantityButtonText}>+</Text>
-            </TouchableOpacity>
-          </View>
+          {!isSoldOut && (
+            <View style={styles.quantityContainer}>
+              <TouchableOpacity
+                style={styles.quantityButton}
+                onPress={decreaseQuantity}
+              >
+                <Text style={styles.quantityButtonText}>-</Text>
+              </TouchableOpacity>
+              
+              <Text style={styles.quantity}>{quantity}</Text>
+              
+              <TouchableOpacity
+                style={styles.quantityButton}
+                onPress={increaseQuantity}
+              >
+                <Text style={styles.quantityButtonText}>+</Text>
+              </TouchableOpacity>
+            </View>
+          )}
 
           <View style={styles.totalContainer}>
             <Text style={styles.totalLabel}>Total:</Text>
@@ -81,8 +111,14 @@ const MenuItemDetailScreen = ({ route, navigation }) => {
       </ScrollView>
 
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.addToCartButton} onPress={addToCartHandler}>
-          <Text style={styles.addToCartButtonText}>Add to Cart</Text>
+        <TouchableOpacity
+          style={[styles.addToCartButton, isSoldOut && { backgroundColor: '#CBD5E1' }]}
+          onPress={addToCartHandler}
+          disabled={isSoldOut}
+        >
+          <Text style={styles.addToCartButtonText}>
+            {isSoldOut ? '🚫 Currently Sold Out' : 'Add to Cart'}
+          </Text>
         </TouchableOpacity>
       </View>
     </View>

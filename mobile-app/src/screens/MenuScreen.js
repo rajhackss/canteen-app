@@ -18,10 +18,35 @@ const MenuScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedBudget, setSelectedBudget] = useState('all');
   const selectedCategoryRef = useRef('all');
+  const selectedBudgetRef = useRef('all');
   const hasLoadedOnce = useRef(false);
 
   selectedCategoryRef.current = selectedCategory;
+  selectedBudgetRef.current = selectedBudget;
+
+  const categories = ['all', 'breakfast', 'lunch', 'snacks', 'beverages', 'dinner'];
+
+  const budgetOptions = [
+    { id: 'all', label: '💰 Any Budget' },
+    { id: '50', label: '≤ ₹50' },
+    { id: '100', label: '≤ ₹100' },
+    { id: '150', label: '≤ ₹150' },
+    { id: '200', label: '≤ ₹200' },
+  ];
+
+  const applyFilters = (items, category, budget) => {
+    let result = items;
+    if (category !== 'all') {
+      result = result.filter(item => item.category === category);
+    }
+    if (budget !== 'all') {
+      const maxPrice = Number(budget);
+      result = result.filter(item => Number(item.price) <= maxPrice);
+    }
+    return result;
+  };
 
   const loadMenuItems = async (silent = false) => {
     try {
@@ -32,12 +57,7 @@ const MenuScreen = ({ navigation }) => {
       const items = response.data || [];
       setMenuItems(items);
       
-      const currentCat = selectedCategoryRef.current;
-      if (currentCat === 'all') {
-        setFilteredItems(items);
-      } else {
-        setFilteredItems(items.filter(item => item.category === currentCat));
-      }
+      setFilteredItems(applyFilters(items, selectedCategoryRef.current, selectedBudgetRef.current));
       hasLoadedOnce.current = true;
     } catch (error) {
       if (!silent) {
@@ -63,8 +83,6 @@ const MenuScreen = ({ navigation }) => {
     }, [])
   );
 
-  const categories = ['all', 'breakfast', 'lunch', 'snacks', 'beverages', 'dinner'];
-
   const onRefresh = async () => {
     setRefreshing(true);
     await loadMenuItems(false);
@@ -73,40 +91,72 @@ const MenuScreen = ({ navigation }) => {
 
   const filterByCategory = (category) => {
     setSelectedCategory(category);
-    if (category === 'all') {
-      setFilteredItems(menuItems);
-    } else {
-      setFilteredItems(menuItems.filter(item => item.category === category));
-    }
+    setFilteredItems(applyFilters(menuItems, category, selectedBudget));
   };
 
-  const renderMenuItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.menuItem}
-      onPress={() => navigation.navigate('MenuItemDetail', { item })}
-    >
-      <View style={styles.menuItemContent}>
-        <View style={styles.menuItemInfo}>
-          <Text style={styles.menuItemName}>{item.name}</Text>
-          <Text style={styles.menuItemDescription} numberOfLines={2}>
-            {item.description}
-          </Text>
-          <View style={styles.menuItemMeta}>
-            <Text style={styles.menuItemPrice}>₹{item.price}</Text>
-            <Text style={styles.menuItemTime}>
-              ⏱ {item.preparationTime} min
+  const filterByBudget = (budget) => {
+    setSelectedBudget(budget);
+    setFilteredItems(applyFilters(menuItems, selectedCategory, budget));
+  };
+
+  const renderMenuItem = ({ item }) => {
+    const isSoldOut = item.isAvailable === false;
+
+    return (
+      <TouchableOpacity
+        style={[styles.menuItem, isSoldOut && styles.menuItemSoldOut]}
+        onPress={() => !isSoldOut && navigation.navigate('MenuItemDetail', { item })}
+        activeOpacity={isSoldOut ? 0.9 : 0.7}
+      >
+        <View style={styles.menuItemContent}>
+          <View style={styles.menuItemInfo}>
+            <View style={styles.titleRow}>
+              <Text style={[styles.menuItemName, isSoldOut && styles.menuItemNameSoldOut]}>
+                {item.name}
+              </Text>
+              {isSoldOut ? (
+                <View style={styles.soldOutBadge}>
+                  <Text style={styles.soldOutText}>🚫 Sold Out</Text>
+                </View>
+              ) : (
+                <View style={styles.liveStockBadge}>
+                  <View style={styles.greenDot} />
+                  <Text style={styles.liveStockText}>Live</Text>
+                </View>
+              )}
+            </View>
+
+            <Text style={styles.menuItemDescription} numberOfLines={2}>
+              {item.description}
             </Text>
+
+            <View style={styles.menuItemMeta}>
+              <Text style={styles.menuItemPrice}>₹{item.price}</Text>
+              <Text style={styles.menuItemTime}>
+                ⏱ {item.preparationTime || 10} min
+              </Text>
+              <View style={styles.ratingBadge}>
+                <Text style={styles.ratingText}>
+                  ⭐ {item.rating ? Number(item.rating).toFixed(1) : '4.5'}
+                </Text>
+                {item.numReviews ? (
+                  <Text style={styles.reviewsCount}>({item.numReviews})</Text>
+                ) : null}
+              </View>
+            </View>
           </View>
+
+          <TouchableOpacity
+            style={[styles.addButton, isSoldOut && styles.addButtonDisabled]}
+            onPress={() => !isSoldOut && navigation.navigate('MenuItemDetail', { item })}
+            disabled={isSoldOut}
+          >
+            <Text style={styles.addButtonText}>{isSoldOut ? '✕' : '+'}</Text>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={() => navigation.navigate('MenuItemDetail', { item })}
-        >
-          <Text style={styles.addButtonText}>+</Text>
-        </TouchableOpacity>
-      </View>
-    </TouchableOpacity>
-  );
+      </TouchableOpacity>
+    );
+  };
 
   const renderCategoryButton = (category) => (
     <TouchableOpacity
@@ -128,11 +178,31 @@ const MenuScreen = ({ navigation }) => {
     </TouchableOpacity>
   );
 
+  const renderBudgetButton = (b) => (
+    <TouchableOpacity
+      key={b.id}
+      style={[
+        styles.budgetButton,
+        selectedBudget === b.id && styles.budgetButtonActive,
+      ]}
+      onPress={() => filterByBudget(b.id)}
+    >
+      <Text
+        style={[
+          styles.budgetButtonText,
+          selectedBudget === b.id && styles.budgetButtonTextActive,
+        ]}
+      >
+        {b.label}
+      </Text>
+    </TouchableOpacity>
+  );
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#059669" />
-        <Text style={styles.loadingText}>Loading menu...</Text>
+        <Text style={styles.loadingText}>Loading live menu...</Text>
       </View>
     );
   }
@@ -149,17 +219,18 @@ const MenuScreen = ({ navigation }) => {
             />
             <View>
               <Text style={styles.headerTitle}>Smart Canteen</Text>
-              <Text style={styles.headerSubtitle}>Order fresh meals & snacks</Text>
+              <Text style={styles.headerSubtitle}>Real-time live ordering</Text>
             </View>
           </View>
           <View style={styles.liveBadge}>
             <View style={styles.liveDot} />
-            <Text style={styles.liveText}>Live</Text>
+            <Text style={styles.liveText}>Live Sync</Text>
           </View>
         </View>
       </View>
 
-      <View style={styles.categoryContainer}>
+      {/* Category Filter Bar */}
+      <View style={styles.filterSection}>
         <FlatList
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -168,6 +239,18 @@ const MenuScreen = ({ navigation }) => {
           keyExtractor={(item) => item}
           contentContainerStyle={styles.categoryList}
         />
+
+        {/* Budget Mode Chips (Feature 7) */}
+        <View style={styles.budgetRow}>
+          <FlatList
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            data={budgetOptions}
+            renderItem={({ item }) => renderBudgetButton(item)}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.budgetList}
+          />
+        </View>
       </View>
 
       <FlatList
@@ -180,7 +263,9 @@ const MenuScreen = ({ navigation }) => {
         }
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>No items available in this category</Text>
+            <Text style={styles.emptyIcon}>🍽️</Text>
+            <Text style={styles.emptyText}>No dishes match your selected filters</Text>
+            <Text style={styles.emptySub}>Try picking another category or budget limit</Text>
           </View>
         }
       />
@@ -263,18 +348,20 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '600',
   },
-  categoryContainer: {
+  filterSection: {
     backgroundColor: '#FFFFFF',
-    paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#E2E8F0',
+    paddingTop: 10,
+    paddingBottom: 8,
   },
   categoryList: {
     paddingHorizontal: 16,
+    paddingBottom: 8,
   },
   categoryButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 7,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
     borderRadius: 20,
     marginRight: 8,
     backgroundColor: '#F1F5F9',
@@ -293,6 +380,36 @@ const styles = StyleSheet.create({
   categoryButtonTextActive: {
     color: '#FFFFFF',
   },
+  budgetRow: {
+    borderTopWidth: 1,
+    borderTopColor: '#F1F5F9',
+    paddingTop: 8,
+  },
+  budgetList: {
+    paddingHorizontal: 16,
+  },
+  budgetButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderRadius: 16,
+    marginRight: 8,
+    backgroundColor: '#F8FAFC',
+    borderWidth: 1,
+    borderColor: '#CBD5E1',
+  },
+  budgetButtonActive: {
+    backgroundColor: '#ECFDF5',
+    borderColor: '#10B981',
+  },
+  budgetButtonText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#64748B',
+  },
+  budgetButtonTextActive: {
+    color: '#059669',
+    fontWeight: '700',
+  },
   menuList: {
     padding: 16,
   },
@@ -308,6 +425,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 3,
   },
+  menuItemSoldOut: {
+    backgroundColor: '#F8FAFC',
+    borderColor: '#E2E8F0',
+    opacity: 0.75,
+  },
   menuItemContent: {
     flexDirection: 'row',
     padding: 16,
@@ -316,11 +438,56 @@ const styles = StyleSheet.create({
   menuItemInfo: {
     flex: 1,
   },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 4,
+    paddingRight: 6,
+  },
   menuItemName: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: '700',
     color: '#1E293B',
-    marginBottom: 4,
+    flex: 1,
+    marginRight: 6,
+  },
+  menuItemNameSoldOut: {
+    color: '#94A3B8',
+    textDecorationLine: 'line-through',
+  },
+  soldOutBadge: {
+    backgroundColor: '#FEE2E2',
+    borderWidth: 1,
+    borderColor: '#FECACA',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  soldOutText: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#DC2626',
+  },
+  liveStockBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ECFDF5',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  greenDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#10B981',
+    marginRight: 4,
+  },
+  liveStockText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#059669',
   },
   menuItemDescription: {
     fontSize: 13,
@@ -331,21 +498,39 @@ const styles = StyleSheet.create({
   menuItemMeta: {
     flexDirection: 'row',
     alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: 8,
   },
   menuItemPrice: {
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '700',
     color: '#059669',
-    marginRight: 12,
   },
   menuItemTime: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#64748B',
     backgroundColor: '#F1F5F9',
-    paddingHorizontal: 8,
+    paddingHorizontal: 7,
     paddingVertical: 3,
     borderRadius: 6,
-    overflow: 'hidden',
+  },
+  ratingBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FEF3C7',
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  ratingText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#B45309',
+  },
+  reviewsCount: {
+    fontSize: 10,
+    color: '#92400E',
+    marginLeft: 2,
   },
   addButton: {
     width: 38,
@@ -354,15 +539,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#10B981',
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 12,
+    marginLeft: 10,
     elevation: 2,
     shadowColor: '#10B981',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 3,
   },
+  addButtonDisabled: {
+    backgroundColor: '#CBD5E1',
+    elevation: 0,
+  },
   addButtonText: {
-    fontSize: 22,
+    fontSize: 20,
     color: '#FFFFFF',
     fontWeight: 'bold',
     marginTop: -2,
@@ -372,10 +561,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 60,
+    paddingHorizontal: 20,
+  },
+  emptyIcon: {
+    fontSize: 48,
+    marginBottom: 10,
   },
   emptyText: {
-    fontSize: 15,
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#475569',
+    textAlign: 'center',
+  },
+  emptySub: {
+    fontSize: 13,
     color: '#94A3B8',
+    marginTop: 4,
+    textAlign: 'center',
   },
 });
 

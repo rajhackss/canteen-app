@@ -40,6 +40,27 @@ const orderSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  pickupCounter: {
+    type: String,
+    default: 'Counter 1 (Main Pickup)'
+  },
+  isExpressPickup: {
+    type: Boolean,
+    default: false
+  },
+  estimatedPrepTime: {
+    type: Number,
+    default: 15
+  },
+  rating: {
+    type: Number,
+    min: 1,
+    max: 5
+  },
+  ratingFeedback: {
+    type: String,
+    default: ''
+  },
   paymentStatus: {
     type: String,
     enum: ['pending', 'paid', 'failed'],
@@ -47,7 +68,7 @@ const orderSchema = new mongoose.Schema({
   },
   paymentMethod: {
     type: String,
-    enum: ['cash', 'card', 'upi'],
+    enum: ['cash', 'upi'],
     default: 'cash'
   },
   createdAt: {

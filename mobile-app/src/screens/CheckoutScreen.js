@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,10 +9,12 @@ import {
   Alert,
   ActivityIndicator,
   Modal,
+  Image,
+  Linking,
 } from 'react-native';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { orderAPI } from '../services/api';
+import { orderAPI, settingsAPI } from '../services/api';
 
 // Helper to convert natural time or chips into ISO string and friendly preview
 const parseTimeInput = (input) => {
@@ -83,10 +85,31 @@ const CheckoutScreen = ({ navigation }) => {
   const [customTimeText, setCustomTimeText] = useState('');
   const [specialInstructions, setSpecialInstructions] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('cash');
+  const [isExpressPickup, setIsExpressPickup] = useState(false);
+  const [canteenSettings, setCanteenSettings] = useState(null);
   const [loading, setLoading] = useState(false);
 
   // Success modal state
   const [orderSuccess, setOrderSuccess] = useState(null);
+
+  useEffect(() => {
+    fetchSettings();
+  }, []);
+
+  const fetchSettings = async () => {
+    try {
+      const res = await settingsAPI.get();
+      if (res.data) setCanteenSettings(res.data);
+    } catch (err) {
+      console.log('Error fetching canteen settings:', err);
+    }
+  };
+
+  // Kitchen wait-time estimation based on cart items
+  const estimatedKitchenTime = cartItems.reduce(
+    (max, item) => Math.max(max, item.menuItem?.preparationTime || 10),
+    10
+  );
 
   // Determine current pickup time info
   const getActivePickupTime = () => {
@@ -130,6 +153,7 @@ const CheckoutScreen = ({ navigation }) => {
         pickupTime: finalPickupTime,
         specialInstructions,
         paymentMethod,
+        isExpressPickup,
       };
 
       const response = await orderAPI.create(orderData);
@@ -144,6 +168,9 @@ const CheckoutScreen = ({ navigation }) => {
         totalAmount: createdOrder.totalAmount,
         paymentMethod: createdOrder.paymentMethod,
         itemsCount: createdOrder.items?.length || cartItems.length,
+        pickupCounter: createdOrder.pickupCounter || (isExpressPickup ? 'Express Shelf' : 'Counter 1'),
+        isExpressPickup: createdOrder.isExpressPickup,
+        estimatedWaitTime: createdOrder.estimatedPrepTime || estimatedKitchenTime,
       });
     } catch (error) {
       Alert.alert(
@@ -172,6 +199,39 @@ const CheckoutScreen = ({ navigation }) => {
             <Text style={styles.totalLabel}>Total Payable</Text>
             <Text style={styles.totalAmount}>₹{getCartTotal()}</Text>
           </View>
+
+          {/* Wait-Time Display */}
+          <View style={styles.waitTimeBadge}>
+            <Text style={styles.waitTimeIcon}>⏱️</Text>
+            <Text style={styles.waitTimeText}>
+              Est. Kitchen Wait-Time:{' '}
+              <Text style={styles.waitTimeBold}>~{estimatedKitchenTime} mins</Text>
+            </Text>
+          </View>
+        </View>
+
+        {/* Express Pickup Option */}
+        <View style={styles.section}>
+          <TouchableOpacity
+            style={[styles.expressCard, isExpressPickup && styles.expressCardActive]}
+            onPress={() => setIsExpressPickup(!isExpressPickup)}
+            activeOpacity={0.8}
+          >
+            <View style={styles.expressHeader}>
+              <View style={styles.expressTitleRow}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Text style={styles.expressIcon}>⚡</Text>
+                  <Text style={styles.expressTitle}>Express Fast Pickup</Text>
+                </View>
+                <View style={[styles.switchTrack, isExpressPickup && styles.switchTrackActive]}>
+                  <View style={[styles.switchThumb, isExpressPickup && styles.switchThumbActive]} />
+                </View>
+              </View>
+              <Text style={styles.expressDesc}>
+                Priority grab-and-go! Your order will be placed directly on the dedicated Express Pickup Shelf as soon as ready.
+              </Text>
+            </View>
+          </TouchableOpacity>
         </View>
 
         {/* Pickup Time Section */}
@@ -242,14 +302,13 @@ const CheckoutScreen = ({ navigation }) => {
           />
         </View>
 
-        {/* Payment Method Section */}
+        {/* Payment Method Section - Card Option REMOVED per requirements */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Payment Method</Text>
+          <Text style={styles.sectionTitle}>Cashless & Payment Methods</Text>
           <View style={styles.paymentGrid}>
             {[
-              { id: 'cash', label: '💵 Cash at Counter', sub: 'Pay when collecting food' },
-              { id: 'upi', label: '📱 UPI Payment', sub: 'Scan QR at counter' },
-              { id: 'card', label: '💳 Card Payment', sub: 'Tap / Swipe at counter' },
+              { id: 'cash', label: '💵 Cash at Counter', sub: 'Pay cash when collecting your food' },
+              { id: 'upi', label: '📱 Instant UPI / QR Payment', sub: 'Pay seamlessly via GPay, PhonePe, Paytm' },
             ].map((option) => (
               <TouchableOpacity
                 key={option.id}
@@ -259,7 +318,7 @@ const CheckoutScreen = ({ navigation }) => {
                 ]}
                 onPress={() => setPaymentMethod(option.id)}
               >
-                <View>
+                <View style={{ flex: 1 }}>
                   <Text
                     style={[
                       styles.paymentOptionText,
@@ -281,6 +340,77 @@ const CheckoutScreen = ({ navigation }) => {
               </TouchableOpacity>
             ))}
           </View>
+
+          {/* Canteen QR Code & UPI Details (Feature 4) */}
+          {paymentMethod === 'upi' && (
+            <View style={styles.upiContainer}>
+              <View style={styles.upiHeader}>
+                <Text style={styles.upiBadge}>⚡ SCAN & PAY</Text>
+                <Text style={styles.upiMerchant}>
+                  Merchant: {canteenSettings?.upiName || 'Campus Smart Canteen'}
+                </Text>
+              </View>
+
+              <View style={styles.qrWrapper}>
+                <Image
+                  source={{
+                    uri:
+                      canteenSettings?.upiQrCode ||
+                      `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(
+                        'upi://pay?pa=' +
+                          (canteenSettings?.upiId || 'canteen@upi') +
+                          '&pn=' +
+                          encodeURIComponent(canteenSettings?.upiName || 'Campus Canteen') +
+                          '&am=' +
+                          getCartTotal() +
+                          '&cu=INR'
+                      )}`,
+                  }}
+                  style={styles.qrImage}
+                  resizeMode="contain"
+                />
+              </View>
+
+              <View style={styles.upiIdRow}>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.upiIdLabel}>Official UPI ID</Text>
+                  <Text style={styles.upiIdValue}>
+                    {canteenSettings?.upiId || 'canteen@okaxis'}
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  style={styles.copyButton}
+                  onPress={() => {
+                    Alert.alert(
+                      'UPI ID Copied',
+                      `Copied: ${canteenSettings?.upiId || 'canteen@okaxis'}\nUse in any UPI app to pay.`
+                    );
+                  }}
+                >
+                  <Text style={styles.copyButtonText}>📋 Copy</Text>
+                </TouchableOpacity>
+              </View>
+
+              <TouchableOpacity
+                style={styles.payUpiAppButton}
+                onPress={() => {
+                  const upiUrl = `upi://pay?pa=${encodeURIComponent(
+                    canteenSettings?.upiId || 'canteen@okaxis'
+                  )}&pn=${encodeURIComponent(
+                    canteenSettings?.upiName || 'Campus Canteen'
+                  )}&am=${getCartTotal()}&cu=INR`;
+                  Linking.openURL(upiUrl).catch(() => {
+                    Alert.alert(
+                      'UPI Payment',
+                      `Please scan the QR code above or pay to ${canteenSettings?.upiId || 'canteen@okaxis'} using Google Pay, PhonePe, or Paytm.`
+                    );
+                  });
+                }}
+              >
+                <Text style={styles.payUpiAppText}>🚀 Pay with UPI App (GPay / PhonePe)</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
 
         {/* Customer Details */}
@@ -357,6 +487,20 @@ const CheckoutScreen = ({ navigation }) => {
                     {orderSuccess.paymentMethod.toUpperCase()}
                   </Text>
                 </View>
+
+                <View style={styles.receiptRow}>
+                  <Text style={styles.receiptLabel}>Pickup Counter</Text>
+                  <Text style={styles.receiptCounterBadge}>
+                    📍 {orderSuccess.pickupCounter || (orderSuccess.isExpressPickup ? 'Express Shelf' : 'Counter 1')}
+                  </Text>
+                </View>
+
+                {orderSuccess.isExpressPickup && (
+                  <View style={styles.receiptRow}>
+                    <Text style={styles.receiptLabel}>Order Type</Text>
+                    <Text style={styles.receiptExpressBadge}>⚡ EXPRESS PICKUP</Text>
+                  </View>
+                )}
 
                 <View style={styles.receiptRow}>
                   <Text style={styles.receiptLabel}>Total Payable</Text>
@@ -773,6 +917,200 @@ const styles = StyleSheet.create({
     color: '#475569',
     fontSize: 14,
     fontWeight: '600',
+  },
+  /* Wait-Time Display */
+  waitTimeBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FEF3C7',
+    borderWidth: 1,
+    borderColor: '#FDE68A',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginTop: 12,
+    gap: 8,
+  },
+  waitTimeIcon: {
+    fontSize: 16,
+  },
+  waitTimeText: {
+    fontSize: 13,
+    color: '#92400E',
+    flex: 1,
+  },
+  waitTimeBold: {
+    fontWeight: '800',
+    color: '#78350F',
+  },
+  /* Express Pickup Card */
+  expressCard: {
+    backgroundColor: '#F8FAFC',
+    borderWidth: 1.5,
+    borderColor: '#CBD5E1',
+    borderRadius: 12,
+    padding: 14,
+  },
+  expressCardActive: {
+    backgroundColor: '#FFFBEB',
+    borderColor: '#F59E0B',
+  },
+  expressHeader: {
+    width: '100%',
+  },
+  expressTitleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  expressIcon: {
+    fontSize: 18,
+  },
+  expressTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#1E293B',
+  },
+  expressDesc: {
+    fontSize: 12,
+    color: '#64748B',
+    lineHeight: 16,
+  },
+  switchTrack: {
+    width: 44,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#CBD5E1',
+    padding: 2,
+    justifyContent: 'center',
+  },
+  switchTrackActive: {
+    backgroundColor: '#F59E0B',
+  },
+  switchThumb: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: '#FFFFFF',
+  },
+  switchThumbActive: {
+    transform: [{ translateX: 20 }],
+  },
+  /* UPI & QR Code Styles */
+  upiContainer: {
+    marginTop: 14,
+    backgroundColor: '#F8FAFC',
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
+    borderRadius: 14,
+    padding: 16,
+    alignItems: 'center',
+  },
+  upiHeader: {
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  upiBadge: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#059669',
+    backgroundColor: '#ECFDF5',
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderRadius: 6,
+    marginBottom: 4,
+    letterSpacing: 0.5,
+  },
+  upiMerchant: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#475569',
+  },
+  qrWrapper: {
+    backgroundColor: '#FFFFFF',
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    marginBottom: 14,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+  },
+  qrImage: {
+    width: 190,
+    height: 190,
+  },
+  upiIdRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#CBD5E1',
+    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    width: '100%',
+    marginBottom: 12,
+  },
+  upiIdLabel: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: '#64748B',
+    textTransform: 'uppercase',
+  },
+  upiIdValue: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#0F172A',
+    fontFamily: 'monospace',
+  },
+  copyButton: {
+    backgroundColor: '#ECFDF5',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
+  },
+  copyButtonText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#059669',
+  },
+  payUpiAppButton: {
+    backgroundColor: '#059669',
+    width: '100%',
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  payUpiAppText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  receiptCounterBadge: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#1E40AF',
+    backgroundColor: '#EFF6FF',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  receiptExpressBadge: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#B45309',
+    backgroundColor: '#FEF3C7',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 6,
   },
 });
 

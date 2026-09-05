@@ -126,6 +126,24 @@ const OrdersScreen = ({ navigation }) => {
           )}
         </View>
 
+        <View style={styles.metaBadgesRow}>
+          <View style={styles.counterBadge}>
+            <Text style={styles.counterBadgeText}>
+              📍 {item.pickupCounter || (item.isExpressPickup ? 'Express Shelf' : 'Counter 1')}
+            </Text>
+          </View>
+          {item.isExpressPickup && (
+            <View style={styles.expressTag}>
+              <Text style={styles.expressTagText}>⚡ Express</Text>
+            </View>
+          )}
+          {item.rating ? (
+            <View style={styles.ratedTag}>
+              <Text style={styles.ratedTagText}>⭐ {item.rating}/5</Text>
+            </View>
+          ) : null}
+        </View>
+
         <View style={styles.orderFooter}>
           <View>
             <Text style={styles.totalLabel}>Total Amount</Text>
@@ -167,6 +185,27 @@ const OrdersScreen = ({ navigation }) => {
           </View>
         </View>
       </View>
+
+      {/* Global Ready Alert Banner if any active order is ready */}
+      {orders.some((o) => o.status === 'ready') && (
+        <TouchableOpacity
+          style={styles.globalReadyBanner}
+          activeOpacity={0.85}
+          onPress={() => {
+            const readyOrder = orders.find((o) => o.status === 'ready');
+            if (readyOrder) navigation.navigate('OrderDetail', { orderId: readyOrder._id });
+          }}
+        >
+          <Text style={styles.globalReadyIcon}>🔔</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.globalReadyTitle}>Your Meal is Ready!</Text>
+            <Text style={styles.globalReadySub}>
+              Collect at {orders.find((o) => o.status === 'ready')?.pickupCounter || 'Counter 1'}. Tap to open.
+            </Text>
+          </View>
+          <Text style={styles.globalReadyArrow}>➔</Text>
+        </TouchableOpacity>
+      )}
 
       <FlatList
         data={orders}
@@ -384,6 +423,84 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 15,
     fontWeight: '700',
+  },
+  globalReadyBanner: {
+    backgroundColor: '#ECFDF5',
+    borderWidth: 2,
+    borderColor: '#10B981',
+    borderRadius: 14,
+    margin: 16,
+    marginBottom: 4,
+    padding: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    elevation: 3,
+    shadowColor: '#10B981',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  globalReadyIcon: {
+    fontSize: 26,
+  },
+  globalReadyTitle: {
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#065F46',
+  },
+  globalReadySub: {
+    fontSize: 12,
+    color: '#047857',
+    marginTop: 2,
+  },
+  globalReadyArrow: {
+    fontSize: 18,
+    color: '#059669',
+    fontWeight: 'bold',
+  },
+  metaBadgesRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 10,
+  },
+  counterBadge: {
+    backgroundColor: '#EFF6FF',
+    borderWidth: 1,
+    borderColor: '#BFDBFE',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  counterBadgeText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#1E40AF',
+  },
+  expressTag: {
+    backgroundColor: '#FEF3C7',
+    borderWidth: 1,
+    borderColor: '#FDE68A',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  expressTagText: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#B45309',
+  },
+  ratedTag: {
+    backgroundColor: '#FEF9C3',
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  ratedTagText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#854D0E',
   },
 });
 

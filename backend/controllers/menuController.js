@@ -1,4 +1,37 @@
 const MenuItem = require('../models/MenuItem');
+const Order = require('../models/Order');
+
+// Get popular / top-selling menu items
+exports.getPopularItems = async (req, res) => {
+  try {
+    const popularData = await Order.aggregate([
+      { $match: { status: { $ne: 'cancelled' } } },
+      { $unwind: '$items' },
+      {
+        $group: {
+          _id: '$items.menuItem',
+          totalOrdered: { $sum: '$items.quantity' },
+          totalRevenue: { $sum: { $multiply: ['$items.price', '$items.quantity'] } }
+        }
+      },
+      { $sort: { totalOrdered: -1 } },
+      { $limit: 10 },
+      {
+        $lookup: {
+          from: 'menuitems',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'itemDetails'
+        }
+      },
+      { $unwind: { path: '$itemDetails', preserveNullAndEmptyArrays: true } }
+    ]);
+
+    res.json(popularData);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching popular items', error: error.message });
+  }
+};
 
 // Get all menu items
 exports.getAllMenuItems = async (req, res) => {

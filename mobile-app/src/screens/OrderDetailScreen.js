@@ -7,6 +7,8 @@ import {
   StyleSheet,
   ActivityIndicator,
   Alert,
+  TextInput,
+  Modal,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { orderAPI } from '../services/api';
@@ -50,6 +52,28 @@ const OrderDetailScreen = ({ route, navigation }) => {
     }, [orderId])
   );
 
+  const [ratingModalVisible, setRatingModalVisible] = useState(false);
+  const [selectedRating, setSelectedRating] = useState(5);
+  const [ratingFeedback, setRatingFeedback] = useState('');
+  const [submittingRating, setSubmittingRating] = useState(false);
+
+  const handleRateOrder = async () => {
+    try {
+      setSubmittingRating(true);
+      await orderAPI.rate(orderId, {
+        rating: selectedRating,
+        feedback: ratingFeedback,
+      });
+      Alert.alert('Thank You!', 'Your rating & feedback has been submitted.');
+      setRatingModalVisible(false);
+      loadOrderDetail();
+    } catch (err) {
+      Alert.alert('Rating Error', err.response?.data?.message || 'Could not submit rating.');
+    } finally {
+      setSubmittingRating(false);
+    }
+  };
+
   const handleCancelOrder = async () => {
     Alert.alert(
       'Cancel Order',
@@ -81,7 +105,7 @@ const OrderDetailScreen = ({ route, navigation }) => {
       case 'preparing':
         return { bg: '#FAF5FF', text: '#7E22CE', border: '#E9D5FF' };
       case 'ready':
-        return { bg: '#F0FDF4', text: '#15803D', border: '#BBF7D0' };
+        return { bg: '#ECFDF5', text: '#047857', border: '#6EE7B7' };
       case 'completed':
         return { bg: '#F0FDF4', text: '#166534', border: '#86EFAC' };
       case 'cancelled':
@@ -142,6 +166,64 @@ const OrderDetailScreen = ({ route, navigation }) => {
       </View>
 
       <ScrollView style={styles.content}>
+        {/* 🔔 Ready Alert Banner (Feature 3) */}
+        {order.status === 'ready' && (
+          <View style={styles.readyAlertBanner}>
+            <View style={styles.readyAlertHeader}>
+              <Text style={styles.readyAlertIcon}>🔔</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.readyAlertTitle}>ORDER IS READY FOR PICKUP!</Text>
+                <Text style={styles.readyAlertDesc}>
+                  Your food is packed and waiting at {order.pickupCounter || 'Counter 1'}.
+                </Text>
+              </View>
+            </View>
+            <View style={styles.readyAlertCallout}>
+              <Text style={styles.readyAlertCalloutText}>
+                👉 Collect from <Text style={{ fontWeight: '800', color: '#047857' }}>{order.pickupCounter || 'Counter 1'}</Text> with Token <Text style={{ fontWeight: '800', color: '#047857' }}>#{order._id.slice(-6).toUpperCase()}</Text>
+              </Text>
+            </View>
+          </View>
+        )}
+
+        {/* 📍 Pickup Counter Guide Card (Feature 12) */}
+        <View style={styles.counterGuideCard}>
+          <View style={styles.counterGuideHeader}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <Text style={styles.counterGuideIcon}>📍</Text>
+              <Text style={styles.counterGuideTitle}>Pickup Counter Guide</Text>
+            </View>
+            {order.isExpressPickup && (
+              <View style={styles.expressBadge}>
+                <Text style={styles.expressBadgeText}>⚡ EXPRESS PICKUP</Text>
+              </View>
+            )}
+          </View>
+
+          <View style={styles.counterDisplayBox}>
+            <Text style={styles.counterDisplayLabel}>Assigned Counter</Text>
+            <Text style={styles.counterDisplayName}>
+              {order.pickupCounter || (order.isExpressPickup ? 'Express Shelf' : 'Counter 1')}
+            </Text>
+            <Text style={styles.counterDisplaySub}>
+              {order.pickupCounter?.includes('2')
+                ? 'Counter 2 (Beverages & Quick Bites Station)'
+                : order.pickupCounter?.includes('Express') || order.isExpressPickup
+                ? 'Express Grab-and-Go Shelf (Fast Lane)'
+                : 'Counter 1 (Main Food & Meals Serving Counter)'}
+            </Text>
+          </View>
+
+          {order.estimatedPrepTime ? (
+            <View style={styles.counterWaitRow}>
+              <Text style={styles.counterWaitIcon}>⏱️</Text>
+              <Text style={styles.counterWaitText}>
+                Est. Kitchen Prep-Time: <Text style={{ fontWeight: '700', color: '#78350F' }}>~{order.estimatedPrepTime} mins</Text>
+              </Text>
+            </View>
+          ) : null}
+        </View>
+
         <View style={styles.section}>
           <View style={styles.statusContainer}>
             <View
@@ -186,6 +268,41 @@ const OrderDetailScreen = ({ route, navigation }) => {
             </View>
           </View>
         </View>
+
+        {/* ⭐ Food Rating Section (Feature 9) */}
+        {order.status === 'completed' && (
+          <View style={styles.ratingSection}>
+            <Text style={styles.ratingSectionTitle}>⭐ Food Quality Rating</Text>
+            {order.rating ? (
+              <View style={styles.ratedBox}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 4 }}>
+                  {[1, 2, 3, 4, 5].map((s) => (
+                    <Text key={s} style={{ fontSize: 20 }}>
+                      {s <= order.rating ? '⭐' : '☆'}
+                    </Text>
+                  ))}
+                  <Text style={styles.ratedScore}>{order.rating}/5</Text>
+                </View>
+                {order.ratingFeedback ? (
+                  <Text style={styles.ratedFeedback}>"{order.ratingFeedback}"</Text>
+                ) : null}
+                <Text style={styles.ratedThanks}>Thank you for rating your meal!</Text>
+              </View>
+            ) : (
+              <View style={styles.unratedBox}>
+                <Text style={styles.unratedText}>
+                  How was your meal? Help other students with your rating!
+                </Text>
+                <TouchableOpacity
+                  style={styles.openRateButton}
+                  onPress={() => setRatingModalVisible(true)}
+                >
+                  <Text style={styles.openRateButtonText}>⭐ Rate Food & Experience</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+        )}
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Order Items</Text>
@@ -237,6 +354,79 @@ const OrderDetailScreen = ({ route, navigation }) => {
 
         <View style={{ height: 30 }} />
       </ScrollView>
+
+      {/* Food Rating Modal */}
+      <Modal
+        visible={ratingModalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setRatingModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.ratingModalCard}>
+            <Text style={styles.ratingModalTitle}>Rate Your Meal ⭐</Text>
+            <Text style={styles.ratingModalSub}>
+              Order #{order._id.slice(-6).toUpperCase()}
+            </Text>
+
+            {/* Interactive Stars */}
+            <View style={styles.starsRow}>
+              {[1, 2, 3, 4, 5].map((star) => (
+                <TouchableOpacity
+                  key={star}
+                  onPress={() => setSelectedRating(star)}
+                  style={styles.starTouch}
+                >
+                  <Text style={[styles.starIcon, selectedRating >= star && styles.starIconActive]}>
+                    ★
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            <Text style={styles.starLabel}>
+              {selectedRating === 5
+                ? '🤩 Outstanding & Delicious!'
+                : selectedRating === 4
+                ? '😋 Good & Tasty'
+                : selectedRating === 3
+                ? '🙂 Average'
+                : selectedRating === 2
+                ? '😕 Below Expectations'
+                : '😞 Poor Quality'}
+            </Text>
+
+            <TextInput
+              style={styles.feedbackInput}
+              placeholder="Tell us what you liked or how to improve..."
+              placeholderTextColor="#94A3B8"
+              value={ratingFeedback}
+              onChangeText={setRatingFeedback}
+              multiline
+              numberOfLines={3}
+            />
+
+            <View style={styles.modalButtonsRow}>
+              <TouchableOpacity
+                style={styles.modalCancelButton}
+                onPress={() => setRatingModalVisible(false)}
+              >
+                <Text style={styles.modalCancelText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalSubmitButton, submittingRating && { opacity: 0.6 }]}
+                onPress={handleRateOrder}
+                disabled={submittingRating}
+              >
+                {submittingRating ? (
+                  <ActivityIndicator color="#fff" size="small" />
+                ) : (
+                  <Text style={styles.modalSubmitText}>Submit Rating</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -454,6 +644,294 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 15,
     fontWeight: '700',
+  },
+  /* 🔔 Ready Alert Banner Styles */
+  readyAlertBanner: {
+    backgroundColor: '#ECFDF5',
+    borderWidth: 2,
+    borderColor: '#10B981',
+    borderRadius: 14,
+    padding: 16,
+    marginBottom: 14,
+    elevation: 4,
+    shadowColor: '#10B981',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+  },
+  readyAlertHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 10,
+  },
+  readyAlertIcon: {
+    fontSize: 30,
+  },
+  readyAlertTitle: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: '#065F46',
+    letterSpacing: -0.3,
+  },
+  readyAlertDesc: {
+    fontSize: 13,
+    color: '#047857',
+    marginTop: 2,
+  },
+  readyAlertCallout: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    padding: 10,
+    borderLeftWidth: 4,
+    borderLeftColor: '#10B981',
+  },
+  readyAlertCalloutText: {
+    fontSize: 13,
+    color: '#1E293B',
+  },
+
+  /* 📍 Pickup Counter Guide Styles */
+  counterGuideCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    padding: 16,
+    marginBottom: 14,
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+  },
+  counterGuideHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  counterGuideIcon: {
+    fontSize: 18,
+  },
+  counterGuideTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1E293B',
+  },
+  expressBadge: {
+    backgroundColor: '#FEF3C7',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#FDE68A',
+  },
+  expressBadgeText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#B45309',
+  },
+  counterDisplayBox: {
+    backgroundColor: '#EFF6FF',
+    borderRadius: 10,
+    padding: 14,
+    borderLeftWidth: 4,
+    borderLeftColor: '#3B82F6',
+    marginBottom: 8,
+  },
+  counterDisplayLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#1E40AF',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  counterDisplayName: {
+    fontSize: 20,
+    fontWeight: '900',
+    color: '#1E3A8A',
+    marginVertical: 3,
+  },
+  counterDisplaySub: {
+    fontSize: 12,
+    color: '#3B82F6',
+    lineHeight: 16,
+  },
+  counterWaitRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFBEB',
+    padding: 10,
+    borderRadius: 8,
+    gap: 8,
+  },
+  counterWaitIcon: {
+    fontSize: 15,
+  },
+  counterWaitText: {
+    fontSize: 13,
+    color: '#92400E',
+  },
+
+  /* ⭐ Food Rating Section Styles */
+  ratingSection: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    padding: 16,
+    marginBottom: 14,
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
+    elevation: 2,
+  },
+  ratingSectionTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1E293B',
+    marginBottom: 10,
+  },
+  ratedBox: {
+    backgroundColor: '#FEF3C7',
+    borderRadius: 10,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: '#FDE68A',
+  },
+  ratedScore: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#92400E',
+    marginLeft: 6,
+  },
+  ratedFeedback: {
+    fontSize: 14,
+    color: '#78350F',
+    fontStyle: 'italic',
+    marginVertical: 4,
+  },
+  ratedThanks: {
+    fontSize: 12,
+    color: '#B45309',
+    fontWeight: '600',
+    marginTop: 4,
+  },
+  unratedBox: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: 10,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    alignItems: 'center',
+  },
+  unratedText: {
+    fontSize: 13,
+    color: '#64748B',
+    textAlign: 'center',
+    marginBottom: 12,
+    lineHeight: 18,
+  },
+  openRateButton: {
+    backgroundColor: '#059669',
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    borderRadius: 8,
+  },
+  openRateButtonText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '700',
+  },
+
+  /* Food Rating Modal Styles */
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(15, 23, 42, 0.65)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  ratingModalCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
+    padding: 22,
+    width: '100%',
+    maxWidth: 380,
+    alignItems: 'center',
+    elevation: 10,
+  },
+  ratingModalTitle: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: '#1E293B',
+    marginBottom: 4,
+  },
+  ratingModalSub: {
+    fontSize: 13,
+    color: '#64748B',
+    marginBottom: 16,
+  },
+  starsRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 8,
+  },
+  starTouch: {
+    padding: 4,
+  },
+  starIcon: {
+    fontSize: 34,
+    color: '#CBD5E1',
+  },
+  starIconActive: {
+    color: '#F59E0B',
+  },
+  starLabel: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#B45309',
+    marginBottom: 14,
+  },
+  feedbackInput: {
+    width: '100%',
+    backgroundColor: '#F8FAFC',
+    borderWidth: 1.5,
+    borderColor: '#CBD5E1',
+    borderRadius: 10,
+    padding: 12,
+    fontSize: 14,
+    color: '#1E293B',
+    minHeight: 80,
+    textAlignVertical: 'top',
+    marginBottom: 18,
+  },
+  modalButtonsRow: {
+    flexDirection: 'row',
+    gap: 10,
+    width: '100%',
+  },
+  modalCancelButton: {
+    flex: 1,
+    backgroundColor: '#F1F5F9',
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalCancelText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#64748B',
+  },
+  modalSubmitButton: {
+    flex: 2,
+    backgroundColor: '#059669',
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalSubmitText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#FFFFFF',
   },
 });
 

@@ -32,6 +32,16 @@ const menuItemSchema = new mongoose.Schema({
     type: Number,
     default: 15 // in minutes
   },
+  rating: {
+    type: Number,
+    default: 4.5,
+    min: 0,
+    max: 5
+  },
+  numReviews: {
+    type: Number,
+    default: 0
+  },
   createdAt: {
     type: Date,
     default: Date.now

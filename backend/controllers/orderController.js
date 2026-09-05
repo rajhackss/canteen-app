@@ -51,14 +51,24 @@ function parsePickupTime(input) {
 // Create new order
 exports.createOrder = async (req, res) => {
   try {
-    const { items, pickupTime, specialInstructions, paymentMethod } = req.body;
+    const {
+      items,
+      pickupTime,
+      specialInstructions,
+      paymentMethod,
+      isExpressPickup,
+      pickupCounter,
+    } = req.body;
 
     if (!items || !Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ message: 'Order must include at least one item' });
     }
 
-    // Validate items and calculate total
+    // Validate items, calculate total and estimated preparation wait time
     let totalAmount = 0;
+    let maxPrepTime = 10;
+    let hasMeals = false;
+    let hasBeveragesOnly = true;
     const orderItems = [];
 
     for (const item of items) {
@@ -73,11 +83,35 @@ exports.createOrder = async (req, res) => {
       const itemTotal = menuItem.price * item.quantity;
       totalAmount += itemTotal;
 
+      if (menuItem.preparationTime && menuItem.preparationTime > maxPrepTime) {
+        maxPrepTime = menuItem.preparationTime;
+      }
+      if (['lunch', 'dinner'].includes(menuItem.category)) {
+        hasMeals = true;
+      }
+      if (menuItem.category !== 'beverages') {
+        hasBeveragesOnly = false;
+      }
+
       orderItems.push({
         menuItem: menuItem._id,
         quantity: item.quantity,
         price: menuItem.price
       });
+    }
+
+    // Smart pickup counter guide assignment
+    let assignedCounter = pickupCounter;
+    if (!assignedCounter) {
+      if (isExpressPickup) {
+        assignedCounter = 'Counter 1 (Express Shelf)';
+      } else if (hasBeveragesOnly) {
+        assignedCounter = 'Counter 1 (Quick / Beverages)';
+      } else if (hasMeals) {
+        assignedCounter = 'Counter 2 (Main Kitchen & Meals)';
+      } else {
+        assignedCounter = 'Counter 3 (Snacks & Fast Food)';
+      }
     }
 
     // Create order
@@ -87,7 +121,10 @@ exports.createOrder = async (req, res) => {
       totalAmount,
       pickupTime: parsePickupTime(pickupTime),
       specialInstructions: specialInstructions || '',
-      paymentMethod: paymentMethod || 'cash'
+      paymentMethod: paymentMethod === 'upi' ? 'upi' : 'cash',
+      isExpressPickup: Boolean(isExpressPickup),
+      pickupCounter: assignedCounter,
+      estimatedPrepTime: maxPrepTime,
     });
 
     await order.save();
@@ -134,14 +171,17 @@ exports.getOrderById = async (req, res) => {
   }
 };
 
-// Update order status (admin only)
+// Update order status & counter (admin only)
 exports.updateOrderStatus = async (req, res) => {
   try {
-    const { status } = req.body;
+    const { status, pickupCounter } = req.body;
+    const updateData = {};
+    if (status) updateData.status = status;
+    if (pickupCounter) updateData.pickupCounter = pickupCounter;
     
     const order = await Order.findByIdAndUpdate(
       req.params.id,
-      { status },
+      updateData,
       { new: true, runValidators: true }
     ).populate('items.menuItem');
 
@@ -152,6 +192,51 @@ exports.updateOrderStatus = async (req, res) => {
     res.json(order);
   } catch (error) {
     res.status(400).json({ message: 'Error updating order status', error: error.message });
+  }
+};
+
+// Rate order & meal (customer only)
+exports.rateOrder = async (req, res) => {
+  try {
+    const { rating, feedback } = req.body;
+    const numRating = Number(rating);
+
+    if (!numRating || numRating < 1 || numRating > 5) {
+      return res.status(400).json({ message: 'Rating must be between 1 and 5' });
+    }
+
+    const order = await Order.findById(req.params.id).populate('items.menuItem');
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    if (order.user.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'Access denied' });
+    }
+
+    order.rating = numRating;
+    order.ratingFeedback = feedback || '';
+    await order.save();
+
+    // Update rating on each ordered MenuItem
+    for (const item of order.items) {
+      const menuItemId = item.menuItem?._id || item.menuItem;
+      if (menuItemId) {
+        const menuItem = await MenuItem.findById(menuItemId);
+        if (menuItem) {
+          const currentTotal = (menuItem.rating || 4.5) * (menuItem.numReviews || 1);
+          const newNumReviews = (menuItem.numReviews || 0) + 1;
+          const newRating = Number(((currentTotal + numRating) / (newNumReviews + 1)).toFixed(1));
+          menuItem.rating = Math.min(5, Math.max(1, newRating));
+          menuItem.numReviews = newNumReviews;
+          await menuItem.save();
+        }
+      }
+    }
+
+    res.json({ message: 'Rating submitted successfully', order });
+  } catch (error) {
+    res.status(500).json({ message: 'Error submitting rating', error: error.message });
   }
 };
 

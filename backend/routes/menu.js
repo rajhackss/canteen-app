@@ -5,6 +5,7 @@ const { auth, adminAuth } = require('../middleware/auth');
 
 // Public routes
 router.get('/', menuController.getAllMenuItems);
+router.get('/popular', menuController.getPopularItems);
 router.get('/:id', menuController.getMenuItemById);
 
 // Admin only routes

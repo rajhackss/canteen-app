@@ -31,6 +31,8 @@ mongoose.connect(process.env.MONGODB_URI)
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/menu', require('./routes/menu'));
 app.use('/api/orders', require('./routes/orders'));
+app.use('/api/feedback', require('./routes/feedback'));
+app.use('/api/settings', require('./routes/settings'));
 
 // Serve static assets from admin directory without auto-serving index.html
 app.use('/admin', express.static(path.join(__dirname, 'admin'), { index: false }));

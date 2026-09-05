@@ -547,12 +547,89 @@
             border-color: var(--primary);
         }
 
-        .actions {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .counter-select {
+            padding: 4px 8px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 11px;
+            background-color: #f8fafc;
+            color: var(--dark);
+            cursor: pointer;
+            width: 100%;
+            max-width: 150px;
+            margin-top: 4px;
+        }
+
+        .counter-tag {
+            display: inline-block;
+            background: #f1f5f9;
+            color: #475569;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
+        .badge-express {
+            background: #fef3c7;
+            color: #b45309;
+            border: 1px solid #fde68a;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            display: inline-block;
+            margin-left: 4px;
+        }
+
+        .btn-stock {
+            border: none;
+            padding: 6px 10px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
             white-space: nowrap;
         }
+
+        .stock-active {
+            background-color: #ecfdf5;
+            color: #059669;
+            border: 1px solid #a7f3d0;
+        }
+
+        .stock-active:hover {
+            background-color: #d1fae5;
+        }
+
+        .stock-sold-out {
+            background-color: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .stock-sold-out:hover {
+            background-color: #fee2e2;
+        }
+
+        .rank-badge {
+            display: inline-flex;
+            width: 24px;
+            height: 24px;
+            border-radius: 12px;
+            background: #e2e8f0;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .rank-1 { background: #fef08a; color: #854d0e; }
+        .rank-2 { background: #e2e8f0; color: #475569; }
+        .rank-3 { background: #fed7aa; color: #9a3412; }
 
         /* Modal */
         .modal {
@@ -755,6 +832,8 @@
                 <button class="active" onclick="showSection('dashboard', this)">📊 Dashboard</button>
                 <button onclick="showSection('orders', this)">📋 Orders</button>
                 <button onclick="showSection('menu', this)">🍔 Menu Items</button>
+                <button onclick="showSection('feedback', this)">💬 Feedback</button>
+                <button onclick="showSection('settings', this)">⚙️ Canteen & UPI</button>
             </div>
         </div>
 
@@ -801,6 +880,30 @@
                     <h3>Total Menu Items</h3>
                     <div class="value" id="menu-items-count">0</div>
                     <div class="stat-subtext" id="menu-avail-subtext">Active in catalog</div>
+                </div>
+            </div>
+
+            <!-- Top-Selling / Popular Food Items -->
+            <div class="card" style="margin-top: 20px;">
+                <div class="section-header">
+                    <h2>🔥 Top-Selling / Popular Food Items</h2>
+                    <span style="font-size: 13px; color: var(--gray);">Ranked by student order volume</span>
+                </div>
+                <div id="popular-loading" class="loading">Loading popular items...</div>
+                <div class="table-responsive" style="margin-top: 10px;">
+                    <table class="table" id="popular-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 70px;">Rank</th>
+                                <th>Dish Name</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Total Ordered</th>
+                                <th>Total Sales</th>
+                            </tr>
+                        </thead>
+                        <tbody id="popular-table-body"></tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -926,6 +1029,92 @@
                 </div>
             </div>
         </div>
+
+        <!-- Feedback Section -->
+        <div id="feedback-section" class="hidden">
+            <div class="grid" style="margin-bottom: 16px;">
+                <div class="stat-card">
+                    <h3>Total Student Reviews</h3>
+                    <div class="value" id="feedback-count">0</div>
+                    <div class="stat-subtext">All-time ratings & reviews</div>
+                </div>
+                <div class="stat-card revenue-card">
+                    <h3>Overall Canteen Rating</h3>
+                    <div class="value" id="feedback-avg">⭐ 5.0</div>
+                    <div class="stat-subtext">Student satisfaction score</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="section-header">
+                    <h2>💬 Student Service Feedback</h2>
+                    <button class="btn btn-secondary" onclick="loadFeedback()" style="padding: 6px 12px; font-size: 13px;">
+                        🔄 Refresh Feedback
+                    </button>
+                </div>
+                <div id="feedback-loading" class="loading">Loading feedback...</div>
+                <div id="feedback-error" class="error hidden"></div>
+                <div class="table-responsive" style="margin-top: 10px;">
+                    <table class="table" id="feedback-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 120px;">Date</th>
+                                <th>Student</th>
+                                <th style="width: 90px;">Rating</th>
+                                <th>Category</th>
+                                <th>Feedback / Comment</th>
+                            </tr>
+                        </thead>
+                        <tbody id="feedback-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Section -->
+        <div id="settings-section" class="hidden">
+            <div class="card">
+                <h2>⚙️ Canteen & UPI Payment Settings</h2>
+                <p style="color: var(--gray); font-size: 13px; margin-top: 4px; margin-bottom: 18px;">
+                    Configure the UPI Payment details and QR Code presented to students in the mobile app.
+                </p>
+                <div id="settings-message" class="hidden" style="padding: 10px 14px; background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; border-radius: 8px; margin-bottom: 16px; font-size: 14px;"></div>
+                <form id="settings-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="settings-upi-id">Canteen UPI ID *</label>
+                            <input type="text" id="settings-upi-id" required placeholder="e.g. smartcanteen@upi or merchant@okaxis">
+                        </div>
+                        <div class="form-group">
+                            <label for="settings-upi-name">Payee / Merchant Name *</label>
+                            <input type="text" id="settings-upi-name" required placeholder="e.g. Smart Canteen Services">
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="settings-qr-file">UPI QR Code Image (Upload File)</label>
+                            <input type="file" id="settings-qr-file" accept="image/*" style="margin-bottom: 8px;">
+                            <label for="settings-qr-url">Or Paste Image / QR Code URL</label>
+                            <input type="text" id="settings-qr-url" placeholder="https://... or data:image/png;base64,...">
+                        </div>
+                    </div>
+
+                    <!-- QR Preview Box -->
+                    <div style="margin: 16px 0; display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+                        <div style="width: 140px; height: 140px; border: 1.5px dashed var(--border); border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #fafafa;">
+                            <img id="settings-qr-preview" src="" alt="QR Preview" style="max-width: 100%; max-height: 100%; display: none; object-fit: contain;">
+                            <span id="settings-qr-placeholder" style="color: var(--gray); font-size: 12px; text-align: center; padding: 8px;">No QR Code Loaded</span>
+                        </div>
+                        <div style="font-size: 13px; color: var(--gray); line-height: 1.5; max-width: 400px;">
+                            <strong>📱 Student Checkout Preview:</strong><br>
+                            This QR code will be displayed directly in the mobile app when students choose <em>📱 UPI Payment</em> during checkout.
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="padding: 12px 24px; font-size: 14px;">
+                        💾 Save Canteen Settings
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
 
     <!-- Edit Menu Item Modal -->
@@ -1018,11 +1207,15 @@
                 if (section === 'dashboard' && buttons[0]) buttons[0].classList.add('active');
                 if (section === 'orders' && buttons[1]) buttons[1].classList.add('active');
                 if (section === 'menu' && buttons[2]) buttons[2].classList.add('active');
+                if (section === 'feedback' && buttons[3]) buttons[3].classList.add('active');
+                if (section === 'settings' && buttons[4]) buttons[4].classList.add('active');
             }
 
             document.getElementById('dashboard-section').classList.add('hidden');
             document.getElementById('menu-section').classList.add('hidden');
             document.getElementById('orders-section').classList.add('hidden');
+            if (document.getElementById('feedback-section')) document.getElementById('feedback-section').classList.add('hidden');
+            if (document.getElementById('settings-section')) document.getElementById('settings-section').classList.add('hidden');
 
             const targetSection = document.getElementById(`${section}-section`);
             if (targetSection) targetSection.classList.remove('hidden');
@@ -1030,12 +1223,16 @@
             if (section === 'dashboard') loadDashboard();
             if (section === 'orders') loadOrders();
             if (section === 'menu') loadMenu();
+            if (section === 'feedback') loadFeedback();
+            if (section === 'settings') loadSettings();
         }
 
         function refreshCurrentSection() {
             if (currentSection === 'dashboard') loadDashboard();
             if (currentSection === 'orders') loadOrders();
             if (currentSection === 'menu') loadMenu();
+            if (currentSection === 'feedback') loadFeedback();
+            if (currentSection === 'settings') loadSettings();
         }
 
         // API calls with authorization and auto-redirect on session expiry
@@ -1112,6 +1309,9 @@
                     const availCount = (menu || []).filter(m => m.available).length;
                     menuAvailSub.textContent = `${availCount} available now`;
                 }
+
+                // Load popular dishes
+                loadPopularItems();
             } catch (error) {
                 console.error('Error loading dashboard:', error);
             }
@@ -1162,27 +1362,39 @@
                     : `<span class="amount-cell">₹${order.totalAmount || 0}</span>`;
 
                 const timeDisplay = order.pickupTime ? new Date(order.pickupTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A';
+                const counterDisplay = order.pickupCounter || 'Counter 1 (Main)';
 
                 return `
                     <tr style="${isCancelled ? 'background-color: #fffaf0;' : ''}">
-                        <td><span class="order-id">#${shortId}</span></td>
+                        <td>
+                            <span class="order-id">#${shortId}</span>
+                            ${order.isExpressPickup ? '<span class="badge-express">⚡ EXPRESS</span>' : ''}
+                        </td>
                         <td>
                             <div class="customer-name">${userName}</div>
                             ${userContact ? `<div class="customer-sub">${userContact}</div>` : ''}
                         </td>
                         <td>${itemsList}</td>
                         <td>${totalDisplay}</td>
-                        <td><strong>${timeDisplay}</strong></td>
+                        <td>
+                            <strong>${timeDisplay}</strong>
+                            <div class="counter-tag">📍 ${counterDisplay}</div>
+                        </td>
                         <td><span class="status-badge status-${order.status}">${order.status}</span></td>
                         <td>
                             <select onchange="handleStatusChange('${order._id}', this.value, '${order.status}', this)" class="status-select">
-                                <option value="">Action...</option>
+                                <option value="">Status...</option>
                                 <option value="pending" ${order.status === 'pending' ? 'disabled' : ''}>⏳ Pending</option>
                                 <option value="confirmed" ${order.status === 'confirmed' ? 'disabled' : ''}>👍 Confirmed</option>
                                 <option value="preparing" ${order.status === 'preparing' ? 'disabled' : ''}>🍳 Preparing</option>
                                 <option value="ready" ${order.status === 'ready' ? 'disabled' : ''}>🔔 Ready</option>
                                 <option value="completed" ${order.status === 'completed' ? 'disabled' : ''}>✅ Completed</option>
                                 <option value="cancelled" ${order.status === 'cancelled' ? 'disabled' : ''} style="color: var(--danger); font-weight: bold;">❌ Cancel Order</option>
+                            </select>
+                            <select onchange="handleCounterChange('${order._id}', this.value)" class="counter-select" title="Assign Pickup Counter">
+                                <option value="Counter 1 (Express & Beverages)" ${counterDisplay.includes('Counter 1') ? 'selected' : ''}>Counter 1 (Express/Drinks)</option>
+                                <option value="Counter 2 (Main Kitchen & Meals)" ${counterDisplay.includes('Counter 2') ? 'selected' : ''}>Counter 2 (Meals/Kitchen)</option>
+                                <option value="Counter 3 (Snacks & Quick Bites)" ${counterDisplay.includes('Counter 3') ? 'selected' : ''}>Counter 3 (Snacks)</option>
                             </select>
                         </td>
                     </tr>
@@ -1254,7 +1466,15 @@
                     <td><span style="text-transform: capitalize; background: var(--gray-light); padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: 500;">${item.category || ''}</span></td>
                     <td><strong style="color: #059669; font-size: 15px;">₹${item.price || 0}</strong></td>
                     <td>${item.preparationTime || 0} mins</td>
-                    <td>${item.available ? '<span style="color: #16a34a; font-weight: 600;">✅ Active</span>' : '<span style="color: #dc2626; font-weight: 600;">❌ Out of Stock</span>'}</td>
+                    <td>
+                        <button 
+                            onclick="toggleItemStock('${item._id}', ${!item.available})"
+                            class="btn-stock ${item.available ? 'stock-active' : 'stock-sold-out'}"
+                            title="Click to toggle availability"
+                        >
+                            ${item.available ? '🟢 In Stock' : '🚫 Sold Out'}
+                        </button>
+                    </td>
                     <td>
                         <div class="actions">
                             <button class="btn btn-secondary" onclick="editMenuItem('${item._id}')" style="padding: 5px 10px; font-size: 12px;">Edit</button>
@@ -1356,6 +1576,179 @@
                 alert('Error deleting menu item: ' + error.message);
             }
         }
+
+        // Popular Food Items
+        async function loadPopularItems() {
+            try {
+                const loading = document.getElementById('popular-loading');
+                if (loading) loading.classList.remove('hidden');
+                const items = await apiCall('/menu/popular');
+                const tbody = document.getElementById('popular-table-body');
+                if (!tbody) return;
+
+                if (!items || items.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:15px; color:var(--gray);">No order data yet.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = items.map((item, idx) => {
+                    const rankClass = idx === 0 ? 'rank-1' : idx === 1 ? 'rank-2' : idx === 2 ? 'rank-3' : '';
+                    const dish = item.itemDetails || {};
+                    return `
+                        <tr>
+                            <td><span class="rank-badge ${rankClass}">#${idx + 1}</span></td>
+                            <td><strong style="color:var(--dark);">${dish.name || 'Dish'}</strong></td>
+                            <td><span style="text-transform:capitalize; background:var(--gray-light); padding:2px 8px; border-radius:4px; font-size:11px;">${dish.category || 'General'}</span></td>
+                            <td>₹${dish.price || 0}</td>
+                            <td><strong>${item.totalOrdered} orders</strong></td>
+                            <td><strong style="color:#059669;">₹${(item.totalRevenue || 0).toLocaleString('en-IN')}</strong></td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (e) {
+                console.error('Error loading popular items:', e);
+            } finally {
+                const loading = document.getElementById('popular-loading');
+                if (loading) loading.classList.add('hidden');
+            }
+        }
+
+        // Toggle Sold Out status
+        async function toggleItemStock(id, newStatus) {
+            try {
+                await apiCall(`/menu/${id}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ available: newStatus })
+                });
+                await Promise.all([loadMenu(), loadDashboard()]);
+            } catch (e) {
+                alert('Error changing availability: ' + e.message);
+            }
+        }
+
+        // Counter change
+        async function handleCounterChange(orderId, newCounter) {
+            try {
+                await apiCall(`/orders/${orderId}/status`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({ pickupCounter: newCounter })
+                });
+                await loadOrders();
+            } catch (e) {
+                alert('Error updating pickup counter: ' + e.message);
+            }
+        }
+
+        // Feedback
+        async function loadFeedback() {
+            try {
+                document.getElementById('feedback-loading').classList.remove('hidden');
+                document.getElementById('feedback-error').classList.add('hidden');
+                const data = await apiCall('/feedback');
+
+                document.getElementById('feedback-count').textContent = data.total || 0;
+                document.getElementById('feedback-avg').textContent = `⭐ ${data.avgRating || 5.0}`;
+
+                const tbody = document.getElementById('feedback-table-body');
+                if (!data.feedbacks || data.feedbacks.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:25px; color:var(--gray);">No student feedback yet.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = data.feedbacks.map(f => {
+                    const stars = '⭐'.repeat(f.rating || 5);
+                    const date = f.createdAt ? new Date(f.createdAt).toLocaleDateString() : '';
+                    return `
+                        <tr>
+                            <td><span style="font-size:12px; color:var(--gray);">${date}</span></td>
+                            <td><strong>${f.user?.name || 'Student'}</strong><div style="font-size:11px; color:var(--gray);">${f.user?.email || ''}</div></td>
+                            <td><span>${stars} (${f.rating})</span></td>
+                            <td><span style="text-transform:capitalize; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:4px; font-size:12px; font-weight:600;">${(f.category || 'general').replace('_', ' ')}</span></td>
+                            <td><div style="max-width:350px; font-size:13px; color:var(--dark);">${f.comment}</div></td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (e) {
+                document.getElementById('feedback-error').textContent = e.message || 'Error loading feedback';
+                document.getElementById('feedback-error').classList.remove('hidden');
+            } finally {
+                document.getElementById('feedback-loading').classList.add('hidden');
+            }
+        }
+
+        // Settings & UPI QR
+        async function loadSettings() {
+            try {
+                const settings = await apiCall('/settings');
+                document.getElementById('settings-upi-id').value = settings.upiId || '';
+                document.getElementById('settings-upi-name').value = settings.upiName || '';
+                document.getElementById('settings-qr-url').value = settings.upiQrCode || '';
+
+                updateQrPreview(settings.upiQrCode);
+            } catch (e) {
+                console.error('Error loading settings:', e);
+            }
+        }
+
+        function updateQrPreview(src) {
+            const preview = document.getElementById('settings-qr-preview');
+            const placeholder = document.getElementById('settings-qr-placeholder');
+            if (src && src.trim()) {
+                preview.src = src;
+                preview.style.display = 'block';
+                placeholder.style.display = 'none';
+            } else {
+                preview.src = '';
+                preview.style.display = 'none';
+                placeholder.style.display = 'block';
+            }
+        }
+
+        // Handle QR file upload
+        document.getElementById('settings-qr-file')?.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    const dataUrl = evt.target.result;
+                    document.getElementById('settings-qr-url').value = dataUrl;
+                    updateQrPreview(dataUrl);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('settings-qr-url')?.addEventListener('input', function(e) {
+            updateQrPreview(e.target.value);
+        });
+
+        document.getElementById('settings-form')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            try {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Saving...';
+
+                const upiId = document.getElementById('settings-upi-id').value.trim();
+                const upiName = document.getElementById('settings-upi-name').value.trim();
+                const upiQrCode = document.getElementById('settings-qr-url').value.trim();
+
+                await apiCall('/settings', {
+                    method: 'PUT',
+                    body: JSON.stringify({ upiId, upiName, upiQrCode })
+                });
+
+                const msg = document.getElementById('settings-message');
+                msg.textContent = '✅ Settings and UPI details saved successfully!';
+                msg.classList.remove('hidden');
+                setTimeout(() => msg.classList.add('hidden'), 4000);
+            } catch (err) {
+                alert('Error saving settings: ' + err.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '💾 Save Canteen Settings';
+            }
+        });
 
         // Auto-refresh data every 30 seconds for live orders and revenue updates
         function startAutoRefresh() {

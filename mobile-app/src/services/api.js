@@ -53,6 +53,7 @@ export const authAPI = {
 export const menuAPI = {
   getAll: (category) => api.get('/menu', { params: { category } }),
   getById: (id) => api.get(`/menu/${id}`),
+  getPopular: () => api.get('/menu/popular'),
 };
 
 export const orderAPI = {
@@ -60,6 +61,17 @@ export const orderAPI = {
   getMyOrders: () => api.get('/orders/my-orders'),
   getById: (id) => api.get(`/orders/${id}`),
   cancel: (id) => api.patch(`/orders/${id}/cancel`),
+  rate: (id, data) => api.post(`/orders/${id}/rate`, data),
+};
+
+export const feedbackAPI = {
+  submit: (data) => api.post('/feedback', data),
+  getAll: () => api.get('/feedback'),
+};
+
+export const settingsAPI = {
+  get: () => api.get('/settings'),
+  update: (data) => api.put('/settings', data),
 };
 
 export default api;
